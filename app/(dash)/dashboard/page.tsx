@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const page = () => {
+const Page = () => {
     return (
         <>
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -55,4 +55,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default Page;

@@ -1,11 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-const page = () => {
+const Page = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string>("");
@@ -98,4 +97,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default Page;

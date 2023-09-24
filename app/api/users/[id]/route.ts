@@ -1,4 +1,5 @@
 import Users from "@/app/models/Users";
+import connectDb from "@/app/utils/Connect";
 
 export async function GET(
     request: Request,
@@ -7,6 +8,7 @@ export async function GET(
     const { id } = params;
 
     try {
+        await connectDb();
         const user = await Users.findOne({ _id: id });
         if (user === null) {
             return new Response(JSON.stringify({ error: "User not found" }), {
@@ -31,6 +33,7 @@ export async function DELETE(
     const { id } = params;
 
     try {
+        await connectDb();
         const validUser = await Users.findOneAndDelete({ _id: id });
 
         if (validUser === null) {
@@ -62,6 +65,8 @@ export async function PUT(
     const { id } = params;
 
     try {
+        await connectDb();
+
         const validUser = await Users.findOne({ _id: id });
 
         if (validUser === null) {

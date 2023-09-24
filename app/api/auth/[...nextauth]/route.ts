@@ -2,6 +2,7 @@ import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import Admins from "@/app/models/Admins";
 import bcryptjs from "bcryptjs";
+import connectDb from "@/app/utils/Connect";
 
 const options: AuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
@@ -23,6 +24,8 @@ const options: AuthOptions = {
                 };
 
                 if (!email || !password) return null;
+
+                await connectDb();
 
                 const Admin = await Admins.findOne({ email });
 
