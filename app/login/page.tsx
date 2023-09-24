@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const Page = () => {
     const [email, setEmail] = useState<string>("");
@@ -44,7 +45,7 @@ const Page = () => {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-gray-800 to-gray-900">
             <div className="bg-gray-700 p-8 rounded-lg shadow-lg opacity-90 flex flex-col items-center space-y-6 md:w-96">
-                <img
+                <Image
                     src="/logo.png"
                     alt="NoRage Logo"
                     width={100}

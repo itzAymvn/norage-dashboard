@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
@@ -127,65 +128,64 @@ export default function Page({ params }: { params: { id: string } }) {
     ) : (
         (user && (
             <div className="flex flex-col gap-4">
-                <div className="flex flex-col md:flex-row justify-between w-full gap-4">
-                    <div className="p-4 flex flex-col items-center justify-center w-100 md:w-1/2 bg-gray-700 rounded-lg shadow-md">
-                        <img
-                            src={user.discord_avatar || "/discord.png"}
-                            alt="Discord Avatar"
-                            className="rounded-full w-32 h-32"
-                        />
-                        <h1 className="text-2xl font-bold">
-                            {user.discord_name}
-                        </h1>
-                    </div>
-                    <div className="p-4 flex flex-col items-center justify-center w-100 md:w-1/2 bg-gray-700 rounded-lg shadow-md">
-                        <img
-                            src={user.minecraft_avatar || "/steve.png"}
-                            alt="Minecraft Avatar"
-                            className="rounded-full w-32 h-32"
-                        />
-                        <h1 className="text-2xl font-bold">
-                            {user.minecraft_name}
-                        </h1>
-                    </div>
-                </div>
-
-                {/* Change UUID & ID */}
-                <div className="p-4 bg-gray-700 rounded-lg shadow-md">
-                    <h1 className="text-2xl font-bold mb-4">User Info</h1>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        <form onSubmit={handleSaveUserInformation}>
-                            <div className="flex flex-col gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <label
-                                        htmlFor="discord_id"
-                                        className="text-gray-300"
-                                    >
-                                        Discord ID
+                <div className="flex flex-col sm:flex-row gap-4 w-100">
+                    <form
+                        onSubmit={handleSaveUserInformation}
+                        className="flex flex-col gap-4 p-4 w-full bg-gray-700 rounded-lg shadow-md"
+                    >
+                        <div className="flex flex-col md:flex-row gap-4">
+                            <div className="flex items-center gap-2 justify-center w-full md:w-1/2">
+                                <Image
+                                    src={user.discord_avatar || "/discord.png"}
+                                    alt="Discord Logo"
+                                    width={100}
+                                    height={100}
+                                    className="rounded-lg"
+                                />
+                                <div className="flex-grow p-4 h-full flex flex-col justify-around bg-gray-700 rounded-lg shadow-md">
+                                    <label className="text-white text-lg font-semibold">
+                                        Discord{" "}
+                                        <a
+                                            href={`https://discord.com/users/${user.discord_id}`}
+                                            className="text-blue-500 hover:text-blue-400 transition duration-200 ease-in-out"
+                                        >
+                                            [{user.discord_name}]
+                                        </a>
                                     </label>
                                     <input
+                                        className="w-full px-4 text-lg text-black placeholder-gray-400 border rounded-lg focus:ring focus:ring-blue-300"
                                         type="text"
-                                        name="discord_id"
-                                        id="discord_id"
-                                        className="bg-gray-800 text-white border p-4 rounded-lg"
+                                        placeholder="Discord ID"
                                         value={editedID}
                                         onChange={(e) =>
                                             setEditedID(e.target.value)
                                         }
                                     />
                                 </div>
-                                <div className="flex flex-col gap-2">
-                                    <label
-                                        htmlFor="minecraft_uuid"
-                                        className="text-gray-300"
-                                    >
-                                        Minecraft UUID
+                            </div>
+
+                            <div className="flex items-center gap-2 justify-center w-full md:w-1/2">
+                                <Image
+                                    src={user.minecraft_avatar || "/steve.png"}
+                                    alt="Minecraft Logo"
+                                    width={100}
+                                    height={100}
+                                    className="rounded-lg"
+                                />
+                                <div className="flex-grow p-4 h-full flex flex-col justify-around bg-gray-700 rounded-lg shadow-md">
+                                    <label className="text-white text-lg font-semibold">
+                                        Minecraft{" "}
+                                        <a
+                                            href={`https://namemc.com/profile/${user.minecraft_uuid}`}
+                                            className="text-blue-500 hover:text-blue-400 transition duration-200 ease-in-out"
+                                        >
+                                            [{user.minecraft_name}]
+                                        </a>
                                     </label>
                                     <input
+                                        className="w-full px-4 text-lg text-black placeholder-gray-400 border rounded-lg focus:ring focus:ring-blue-300"
                                         type="text"
-                                        name="minecraft_uuid"
-                                        id="minecraft_uuid"
-                                        className="bg-gray-800 text-white border p-4 rounded-lg"
+                                        placeholder="Minecraft UUID"
                                         value={editedUUID}
                                         onChange={(e) =>
                                             setEditedUUID(e.target.value)
@@ -193,53 +193,78 @@ export default function Page({ params }: { params: { id: string } }) {
                                     />
                                 </div>
                             </div>
+                        </div>
 
-                            {error && (
-                                <div className="bg-red-500 text-white p-4 rounded-lg mt-4">
-                                    {error}
-                                </div>
-                            )}
+                        <button
+                            className={
+                                "w-full h-12 text-lg font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition duration-300 " +
+                                (editedUUID !== user.minecraft_uuid ||
+                                editedID !== user.discord_id
+                                    ? "block"
+                                    : "hidden")
+                            }
+                            type="submit"
+                            disabled={editedID === user.discord_id}
+                        >
+                            Save
+                        </button>
 
-                            <button
-                                type="submit"
-                                className="bg-blue-500 text-white rounded-lg p-4 mt-4 hover:bg-blue-600 transition duration-200 ease-in-out"
-                            >
-                                Save
-                            </button>
-                        </form>
-                    </div>
+                        {error && (
+                            <div className="w-full h-12 text-lg font-semibold text-white bg-red-600 rounded-lg flex items-center justify-center border border-red-700 opacity-80">
+                                {error}
+                            </div>
+                        )}
+                    </form>
                 </div>
-
                 {user?.achievements?.length > 0 && (
                     <div className="p-4 bg-gray-700 rounded-lg shadow-md">
                         <h1 className="text-2xl font-bold mb-4">
                             Achievements [{user.achievements.length}]
                         </h1>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {user.achievements.map((achievement) => (
-                                <Link
-                                    href={`/dashboard/users/${
-                                        user._id
-                                    }/achievements/${achievement.name.replace(
-                                        / /g,
-                                        "-"
-                                    )}`}
-                                    key={achievement.name}
-                                    className="bg-gray-800 p-4 rounded-lg shadow-md"
-                                >
-                                    <h1 className="text-xl font-bold mb-2 text-gray-100">
-                                        {achievement.name}
-                                    </h1>
-                                    <p className="text-gray-300">
-                                        {achievement.description}
-                                    </p>
-                                    <p className="text-gray-300">
-                                        {new Date(
-                                            achievement.date
-                                        ).toLocaleDateString()}
-                                    </p>
-                                </Link>
-                            ))}
+                        <div className="w-full">
+                            <table className="w-full bg-gray-800 text-white">
+                                <thead>
+                                    <tr>
+                                        <th className="text-left px-4 py-2">
+                                            Name
+                                        </th>
+                                        <th className="text-left px-4 py-2">
+                                            Description
+                                        </th>
+                                        <th className="text-left px-4 py-2">
+                                            Date
+                                        </th>
+                                        <th className="text-left px-4 py-2">
+                                            Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {user.achievements.map((achievement) => (
+                                        <tr key={achievement.name}>
+                                            <td className="px-4 py-2">
+                                                {achievement.name}
+                                            </td>
+                                            <td className="px-4 py-2">
+                                                {achievement.description}
+                                            </td>
+                                            <td className="px-4 py-2">
+                                                {new Date(
+                                                    achievement.date
+                                                ).toLocaleDateString()}
+                                            </td>
+                                            <td className="px-2 py-2 flex gap-2">
+                                                <button className="bg-red-500 text-white rounded-lg p-2 hover:bg-red-600 transition duration-200 ease-in-out focus:outline-none">
+                                                    Delete
+                                                </button>
+                                                <button className="bg-blue-500 text-white rounded-lg p-2 hover:bg-blue-600 transition duration-200 ease-in-out focus:outline-none">
+                                                    Edit
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 )}

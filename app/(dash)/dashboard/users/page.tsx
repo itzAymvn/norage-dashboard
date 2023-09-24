@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
@@ -106,7 +107,9 @@ const Page = () => {
                             key={i}
                             className="bg-gray-700 p-4 rounded-lg shadow-md hover:shadow-lg transition duration-200 ease-in-out transform hover:bg-gray-600 break-words"
                         >
-                            <img
+                            <Image
+                                width={80}
+                                height={80}
                                 src={user.minecraft_avatar}
                                 alt={`${user.minecraft_name}'s Avatar`}
                                 className="w-20 h-20 mx-auto rounded-full border-4 border-gray-600"

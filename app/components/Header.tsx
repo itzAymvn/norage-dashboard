@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const Header = () => {
     const router = useRouter();
@@ -10,14 +11,14 @@ const Header = () => {
 
     return (
         <header className="flex items-center justify-between p-4 bg-gray-800">
-            <div className="flex items-center space-x-4">
+            <Link className="flex items-center space-x-4" href="/dashboard">
                 <Image
                     src="/logo.png"
                     alt="NoRage Logo"
                     width={48}
                     height={48}
                 />
-            </div>
+            </Link>
             <div className="flex items-center space-x-4">
                 {/* <button
                     className="text-white hover:text-gray-300"
