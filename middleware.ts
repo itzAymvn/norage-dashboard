@@ -9,15 +9,10 @@ export async function middleware(request: NextRequest) {
         secret: process.env.NEXTAUTH_SECRET,
     });
 
-    const loginLink: string = new URL(
-        "/login",
-        process.env.NEXT_PUBLIC_BASE_URL
-    ).href;
+    const loginLink: string = new URL("/login", request.nextUrl.origin).href;
 
-    const dashboardLink: string = new URL(
-        "/dashboard",
-        process.env.NEXT_PUBLIC_BASE_URL
-    ).href;
+    const dashboardLink: string = new URL("/dashboard", request.nextUrl.origin)
+        .href;
 
     if (path === "/") {
         if (token) {
@@ -35,12 +30,12 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(dashboardLink);
     }
 
-    // if (path.startsWith("/api/") && !token) {
-    //     return NextResponse.json(
-    //         { error: "You must be logged in to access this resource" },
-    //         { status: 401 }
-    //     );
-    // }
+    if (path.startsWith("/api/") && !token) {
+        return NextResponse.json(
+            { error: "You must be logged in to access this resource" },
+            { status: 401 }
+        );
+    }
 }
 
 export const config = {
