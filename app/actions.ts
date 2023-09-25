@@ -1,5 +1,7 @@
 "use server";
 
+import connectDb from "./utils/Connect";
+
 import Premium from "./models/Premium";
 import Blacklist from "./models/Blacklist";
 import Users from "./models/Users";
@@ -8,6 +10,8 @@ export const UpdatePremium = async (
     discord_id: string,
     premium: boolean
 ): Promise<{ success: boolean; message: string }> => {
+    await connectDb();
+
     const premiumExists = await Premium.findOne({
         discord_id: discord_id,
     });
@@ -43,6 +47,8 @@ export const updateBlacklist = async (
     discord_id: string,
     blacklisted: boolean
 ): Promise<{ success: boolean; message: string }> => {
+    await connectDb();
+
     const blacklistExists = await Blacklist.findOne({
         discord_id: discord_id,
     });
@@ -79,6 +85,8 @@ export const updateBugHunter = async (
     discord_id: string,
     bug_hunter: boolean
 ): Promise<{ success: boolean; message: string }> => {
+    await connectDb();
+
     const user = await Users.findOne({
         discord_id: discord_id,
     });

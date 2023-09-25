@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { User } from "@/app/types";
+import Loader from "@/app/components/Loader";
 
 const Page = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -81,7 +82,7 @@ const Page = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {isLoading ? (
-                    <p className="text-gray-400">Loading...</p>
+                    <Loader />
                 ) : filteredUsers.length === 0 ? (
                     <p className="text-gray-400">No users to display.</p>
                 ) : (
@@ -94,7 +95,7 @@ const Page = () => {
                             <Image
                                 width={80}
                                 height={80}
-                                src={user.minecraft_avatar}
+                                src={user.minecraft_avatar || "/steve.png"}
                                 alt={`${user.minecraft_name}'s Avatar`}
                                 className="w-20 h-20 mx-auto rounded-full border-4 border-gray-600"
                             />
