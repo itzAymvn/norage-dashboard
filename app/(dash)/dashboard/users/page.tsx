@@ -3,23 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-
-interface Achievement {
-    name: string;
-    description: string;
-    date: Date | string;
-}
-
-interface User {
-    _id: string;
-    discord_id: string;
-    discord_name: string;
-    minecraft_uuid: string;
-    minecraft_name: string;
-    minecraft_avatar: string;
-    bug_hunter: boolean;
-    achievements: Achievement[];
-}
+import { User } from "@/app/types";
 
 const Page = () => {
     const [searchQuery, setSearchQuery] = useState("");

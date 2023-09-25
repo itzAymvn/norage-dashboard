@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
+/* Hide vertical scrollbar but still scrollable */
+body::-webkit-scrollbar {
+    width: 0.5em;
 }

@@ -50,6 +50,7 @@ const Page = () => {
                     alt="NoRage Logo"
                     width={100}
                     height={100}
+                    priority
                     className="mb-4"
                 />
                 <h1 className="text-4xl font-bold text-white mb-2 text-center">

@@ -3,24 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-
-interface Achievement {
-    name: string;
-    description: string;
-    date: Date | string;
-}
-
-interface User {
-    _id: string;
-    discord_id: string;
-    discord_avatar: string;
-    discord_name: string;
-    minecraft_uuid: string;
-    minecraft_name: string;
-    minecraft_avatar: string;
-    bug_hunter: boolean;
-    achievements: Achievement[];
-}
+import Achievements from "@/app/components/Achievements";
+import { User } from "@/app/types";
+import Loader from "@/app/components/Loader";
+import Toggles from "@/app/components/Toggles";
 
 export default function Page({ params }: { params: { id: string } }) {
     const { id } = params;
@@ -30,6 +16,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const [editedID, setEditedID] = useState<string>(user?.discord_id!);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
 
     const handleSaveUserInformation = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -54,9 +41,45 @@ export default function Page({ params }: { params: { id: string } }) {
             return;
         }
 
-        // Update the user
-        setUser(data);
-        setError(null);
+        try {
+            // Refetch the minecraft & discord avatars
+            const [discordRes, minecraftRes] = await Promise.all([
+                fetch(`/api/discord/users/${editedID}`),
+                fetch(`/api/minecraft/${editedUUID}`),
+            ]);
+
+            const [discordData, minecraftData] = await Promise.all([
+                discordRes.json(),
+                minecraftRes.json(),
+            ]);
+
+            // Update the user with the new data
+            const updatedUser = {
+                ...user,
+                discord_id: editedID,
+                discord_name: discordData.username || "Invalid ID",
+                discord_avatar: discordData.avatarURL,
+                minecraft_uuid: editedUUID,
+                minecraft_name: minecraftData.name || "Invalid UUID",
+                minecraft_avatar: minecraftData.avatar,
+            };
+
+            // Return the updated user
+            setUser(updatedUser as User);
+            setError(null);
+            setSuccess("Successfully updated user.");
+
+            setTimeout(
+                () => {
+                    setSuccess(null);
+                },
+
+                3000
+            );
+        } catch (error: any) {
+            console.error(error);
+            setError(error.message);
+        }
     };
 
     useEffect(() => {
@@ -92,7 +115,6 @@ export default function Page({ params }: { params: { id: string } }) {
                     minecraft_avatar: minecraftData.avatar,
                 };
 
-                // Return the updated user
                 setUser(updatedUser);
                 setEditedID(updatedUser.discord_id);
                 setEditedUUID(updatedUser.minecraft_uuid);
@@ -102,29 +124,7 @@ export default function Page({ params }: { params: { id: string } }) {
     }, [id]);
 
     return isLoading ? (
-        <div className="flex flex-col items-center justify-center w-full h-full">
-            <svg
-                className="animate-spin h-10 w-10 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-            >
-                <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                ></circle>
-                <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0
-                        014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-            </svg>
-        </div>
+        <Loader />
     ) : (
         (user && (
             <div className="flex flex-col gap-4">
@@ -140,7 +140,9 @@ export default function Page({ params }: { params: { id: string } }) {
                                     alt="Discord Logo"
                                     width={100}
                                     height={100}
+                                    priority
                                     className="rounded-lg"
+                                    blurDataURL="/discord.png"
                                 />
                                 <div className="flex-grow p-4 h-full flex flex-col justify-around bg-gray-700 rounded-lg shadow-md">
                                     <label className="text-white text-lg font-semibold">
@@ -169,6 +171,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                     src={user.minecraft_avatar || "/steve.png"}
                                     alt="Minecraft Logo"
                                     width={100}
+                                    priority
                                     height={100}
                                     className="rounded-lg"
                                 />
@@ -204,7 +207,10 @@ export default function Page({ params }: { params: { id: string } }) {
                                     : "hidden")
                             }
                             type="submit"
-                            disabled={editedID === user.discord_id}
+                            disabled={
+                                editedUUID === user.minecraft_uuid &&
+                                editedID === user.discord_id
+                            }
                         >
                             Save
                         </button>
@@ -214,59 +220,19 @@ export default function Page({ params }: { params: { id: string } }) {
                                 {error}
                             </div>
                         )}
+
+                        {success && (
+                            <div className="w-full h-12 text-lg font-semibold text-white bg-green-600 rounded-lg flex items-center justify-center border border-green-700 opacity-80">
+                                {success}
+                            </div>
+                        )}
                     </form>
                 </div>
+
+                <Toggles user={user as User} setUser={setUser} />
+
                 {user?.achievements?.length > 0 && (
-                    <div className="p-4 bg-gray-700 rounded-lg shadow-md">
-                        <h1 className="text-2xl font-bold mb-4">
-                            Achievements [{user.achievements.length}]
-                        </h1>
-                        <div className="w-full">
-                            <table className="w-full bg-gray-800 text-white">
-                                <thead>
-                                    <tr>
-                                        <th className="text-left px-4 py-2">
-                                            Name
-                                        </th>
-                                        <th className="text-left px-4 py-2">
-                                            Description
-                                        </th>
-                                        <th className="text-left px-4 py-2">
-                                            Date
-                                        </th>
-                                        <th className="text-left px-4 py-2">
-                                            Actions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {user.achievements.map((achievement) => (
-                                        <tr key={achievement.name}>
-                                            <td className="px-4 py-2">
-                                                {achievement.name}
-                                            </td>
-                                            <td className="px-4 py-2">
-                                                {achievement.description}
-                                            </td>
-                                            <td className="px-4 py-2">
-                                                {new Date(
-                                                    achievement.date
-                                                ).toLocaleDateString()}
-                                            </td>
-                                            <td className="px-2 py-2 flex gap-2">
-                                                <button className="bg-red-500 text-white rounded-lg p-2 hover:bg-red-600 transition duration-200 ease-in-out focus:outline-none">
-                                                    Delete
-                                                </button>
-                                                <button className="bg-blue-500 text-white rounded-lg p-2 hover:bg-blue-600 transition duration-200 ease-in-out focus:outline-none">
-                                                    Edit
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <Achievements user={user as User} />
                 )}
             </div>
         )) || (

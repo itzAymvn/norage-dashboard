@@ -8,6 +8,7 @@ export default function Loading() {
                     src="/logo.png"
                     alt="NoRage Logo"
                     width={100}
+                    priority
                     height={100}
                     className="mb-4"
                 />

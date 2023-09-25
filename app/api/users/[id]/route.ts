@@ -1,4 +1,7 @@
 import Users from "@/app/models/Users";
+import Premium from "@/app/models/Premium";
+import Blacklist from "@/app/models/Blacklist";
+import Usercommands from "@/app/models/Usercommands";
 import connectDb from "@/app/utils/Connect";
 
 export async function GET(
@@ -9,14 +12,33 @@ export async function GET(
 
     try {
         await connectDb();
-        const user = await Users.findOne({ _id: id });
+        const user = await Users.findOne({ _id: id }, { __v: 0 });
         if (user === null) {
+            console.log("User not found");
             return new Response(JSON.stringify({ error: "User not found" }), {
                 headers: { "content-type": "application/json" },
             });
         }
 
-        return new Response(JSON.stringify(user), {
+        const userClone = JSON.parse(JSON.stringify(user));
+
+        const premiumUser = await Premium.findOne({
+            discord_id: userClone.discord_id,
+        });
+
+        const blacklistedUser = await Blacklist.findOne({
+            discord_id: userClone.discord_id,
+        });
+
+        const userCommands = await Usercommands.findOne({
+            discord_id: userClone.discord_id,
+        });
+
+        userClone.premium = premiumUser !== null;
+        userClone.blacklisted = blacklistedUser !== null;
+        userClone.commands = userCommands?.commands || 0;
+
+        return new Response(JSON.stringify(userClone), {
             headers: { "content-type": "application/json" },
         });
     } catch (error) {
@@ -95,6 +117,8 @@ export async function PUT(
                 { discord_id: discord_id },
                 { minecraft_uuid: minecraft_uuid },
             ],
+
+            _id: { $ne: id },
         });
 
         if (userExists !== null) {
