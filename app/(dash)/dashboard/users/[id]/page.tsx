@@ -7,6 +7,7 @@ import Achievements from "@/app/components/Achievements";
 import { User } from "@/app/types";
 import Loader from "@/app/components/Loader";
 import Toggles from "@/app/components/Toggles";
+import { Toaster } from "react-hot-toast";
 
 export default function Page({ params }: { params: { id: string } }) {
     const { id } = params;
@@ -231,9 +232,9 @@ export default function Page({ params }: { params: { id: string } }) {
 
                 <Toggles user={user as User} setUser={setUser} />
 
-                {user?.achievements?.length > 0 && (
-                    <Achievements user={user as User} />
-                )}
+                <Achievements user={user as User} />
+
+                <Toaster />
             </div>
         )) || (
             <div className="flex flex-col items-center justify-center w-full h-full">

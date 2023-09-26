@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { User } from "@/app/types";
 import Loader from "@/app/components/Loader";
+import Usercard from "@/app/components/Usercard";
 
 const Page = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -87,32 +88,7 @@ const Page = () => {
                     <p className="text-gray-400">No users to display.</p>
                 ) : (
                     filteredUsers.map((user, i) => (
-                        <Link
-                            href={`/dashboard/users/${user._id}`}
-                            key={i}
-                            className="bg-gray-700 p-4 rounded-lg shadow-md hover:shadow-lg transition duration-200 ease-in-out transform hover:bg-gray-600 break-words"
-                        >
-                            <Image
-                                width={80}
-                                height={80}
-                                src={user.minecraft_avatar || "/steve.png"}
-                                alt={`${user.minecraft_name}'s Avatar`}
-                                className="w-20 h-20 mx-auto rounded-full border-4 border-gray-600"
-                            />
-                            <h1 className="text-xl font-semibold text-white mt-4">
-                                {user.discord_name}{" "}
-                                <span className="text-gray-400 text-sm">
-                                    [{user.minecraft_name}]
-                                </span>
-                            </h1>
-                            <p className="text-gray-400 text-sm">
-                                Discord ID: {user.discord_id}
-                            </p>
-
-                            <p className="text-gray-400 text-sm">
-                                Minecraft UUID: {user.minecraft_uuid}
-                            </p>
-                        </Link>
+                        <Usercard key={i} user={user} />
                     ))
                 )}
             </div>

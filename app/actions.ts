@@ -5,6 +5,10 @@ import connectDb from "./utils/Connect";
 import Premium from "./models/Premium";
 import Blacklist from "./models/Blacklist";
 import Users from "./models/Users";
+import Usercommands from "./models/Usercommands";
+import { User } from "./types";
+
+import { cookies } from "next/headers";
 
 export const UpdatePremium = async (
     discord_id: string,
@@ -113,4 +117,74 @@ export const updateBugHunter = async (
         success: true,
         message: "Successfully updated bug hunter status.",
     };
+};
+
+export const updateUserCommands = async (
+    discord_id: string,
+    commands: number
+): Promise<{ success: boolean; message: string }> => {
+    try {
+        await connectDb();
+
+        const user = await Usercommands.findOne({
+            discord_id: discord_id,
+        });
+
+        if (user === null) {
+            const newUser = new Usercommands({
+                discord_id: discord_id,
+                commands: commands,
+            });
+            await newUser.save();
+        } else {
+            user.commands = commands;
+            await user.save();
+        }
+
+        return {
+            success: true,
+            message: "Successfully updated user commands.",
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: "Something went wrong.",
+        };
+    }
+};
+
+export const getUsers = async (): Promise<{
+    success: boolean;
+    message: string;
+    users: User[];
+}> => {
+    try {
+        const fetchOptions: any = {
+            headers: {
+                cookie: cookies(),
+            },
+            cache: "force-cache",
+            next: {
+                tags: ["getUsers"],
+            },
+        };
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/users`,
+            fetchOptions
+        );
+
+        const users = await response.json();
+
+        return {
+            success: true,
+            message: "Successfully retrieved users.",
+            users: users,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: "Something went wrong.",
+            users: [],
+        };
+    }
 };

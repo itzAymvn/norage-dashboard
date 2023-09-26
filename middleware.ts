@@ -30,11 +30,15 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(dashboardLink);
     }
 
-    if (path.startsWith("/api/") && !token) {
-        return NextResponse.json(
-            { error: "You must be logged in to access this resource" },
-            { status: 401 }
-        );
+    if (path.startsWith("/api/")) {
+        if (!token) {
+            return NextResponse.json(
+                { error: "You must be logged in to access this resource" },
+                { status: 401 }
+            );
+        }
+
+        return NextResponse.next();
     }
 }
 
