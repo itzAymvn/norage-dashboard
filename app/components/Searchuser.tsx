@@ -2,20 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useDebounce } from "use-debounce";
+import { useDebounce } from "usehooks-ts";
 
 const Searchuser = () => {
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
-    // const [debouncedSearchQuery] = useDebounce(searchQuery, 350);
+    const debouncedSearchQuery = useDebounce(searchQuery, 350); // Debounce the search query by 350ms
 
     useEffect(() => {
-        if (searchQuery) {
-            router.push(`/dashboard/users?search=${searchQuery}`);
+        if (debouncedSearchQuery) {
+            router.push(`/dashboard/users?search=${debouncedSearchQuery}`);
         } else {
             router.push("/dashboard/users");
         }
-    }, [searchQuery]);
+    }, [router, debouncedSearchQuery]);
 
     return (
         <input

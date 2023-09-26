@@ -22,7 +22,7 @@ const Usercard = ({ user }: { user: User }) => {
                         className="bg-green-300 w-20 h-20 rounded-lg border-4 border-gray-600"
                     />
                 </a>
-                <div className="mt-2 text-1xl font-semibold text-white flex flex-col justify-center items-center space-y-1">
+                <div className="mt-2 text-1xl font-semibold text-white flex flex-col justify-center space-y-1">
                     <span>
                         <FontAwesomeIcon icon={faDiscord} className="mr-1" />
                         {user.discord_name || "N/A"}

@@ -15,7 +15,6 @@ const Page = async ({
     const { success, message, users } = await getUsers();
 
     // Create a copy of the users array
-    // This is so we can filter the users array without affecting the original
     const renderedUsers = users;
 
     // If the request was not successful, return an error message
@@ -32,26 +31,42 @@ const Page = async ({
         },
     };
 
-    // Loop through each user and fetch their minecraft and discord data
+    // Create an array to store all the fetch promises
+    const fetchPromises = [];
+
+    // Loop through each user and add the fetch promises to the array
     for (const user of users) {
-        try {
-            const mcData = await fetch(
-                `http://sessionserver.mojang.com/session/minecraft/profile/${user.minecraft_uuid}`
-            );
-            const discordData = await fetch(
-                `${NEXT_PUBLIC_BASE_URL}/api/discord/users/${user.discord_id}`,
-                fetchOptions
-            );
+        const mcPromise = fetch(
+            `http://sessionserver.mojang.com/session/minecraft/profile/${user.minecraft_uuid}`
+        ).then((response) => response.json());
 
-            const mcJson = await mcData.json();
-            const discordJson = await discordData.json();
+        const discordPromise = fetch(
+            `${NEXT_PUBLIC_BASE_URL}/api/discord/users/${user.discord_id}`,
+            fetchOptions
+        ).then((response) => response.json());
 
-            user.minecraft_avatar = `https://crafatar.com/avatars/${user?.minecraft_uuid}?overlay=true`;
-            user.minecraft_name = mcJson.name;
-            user.discord_name = discordJson.username;
-        } catch (err) {
-            return user;
+        // Push both promises into the array
+        fetchPromises.push(mcPromise, discordPromise);
+    }
+
+    try {
+        // Use Promise.all to wait for all fetch requests to complete
+        const results = await Promise.all(fetchPromises);
+
+        // Loop through the results and update user data
+        for (let i = 0; i < users.length; i++) {
+            const mcJson = results[i * 2];
+            const discordJson = results[i * 2 + 1];
+
+            users[
+                i
+            ].minecraft_avatar = `https://crafatar.com/avatars/${users[i].minecraft_uuid}?overlay=true`;
+            users[i].minecraft_name = mcJson.name;
+            users[i].discord_name = discordJson.username;
         }
+    } catch (err) {
+        // Handle any errors that occurred during fetching
+        console.error("Error fetching data:", err);
     }
 
     // If there is a search query, filter the users array
