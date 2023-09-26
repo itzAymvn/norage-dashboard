@@ -17,19 +17,19 @@ const Usercard = ({ user }: { user: User }) => {
                     <Image
                         width={20}
                         height={20}
-                        src={user.minecraft_avatar || "/steve.png"}
-                        alt={`${user.minecraft_name}'s Avatar`}
+                        src={user.minecraft?.avatarURL || "/steve.png"}
+                        alt={`${user.minecraft?.name}'s Avatar`}
                         className="bg-green-300 w-20 h-20 rounded-lg border-4 border-gray-600"
                     />
                 </a>
                 <div className="mt-2 text-1xl font-semibold text-white flex flex-col justify-center space-y-1">
                     <span>
                         <FontAwesomeIcon icon={faDiscord} className="mr-1" />
-                        {user.discord_name || "N/A"}
+                        {user.discord?.username || "N/A"}
                     </span>
                     <span>
                         <FontAwesomeIcon icon={faCube} className="mr-1" />
-                        {user.minecraft_name || "N/A"}
+                        {user.minecraft?.name || "N/A"}
                     </span>
                 </div>
             </div>

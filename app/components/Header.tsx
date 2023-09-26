@@ -14,7 +14,14 @@ const Header = () => {
                     priority
                 />
             </Link>
+
             <div className="flex items-center space-x-4">
+                <Link
+                    href="/dashboard"
+                    className="bg-gray-700 text-white rounded-md p-2 space-y-2 cursor-pointer hover:bg-gray-600"
+                >
+                    Dashboard
+                </Link>
                 <div className="flex items-center space-x-2">
                     <Signout />
                 </div>

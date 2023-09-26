@@ -28,12 +28,9 @@ const Achievements = ({ user }: { user: User }) => {
                             {user.achievements.map((achievement) => (
                                 <tr key={achievement.name}>
                                     <td className="px-4 py-2">
-                                        <Link
-                                            href={`/achievements/${achievement._id}`}
-                                            className="text-blue-500 hover:underline"
-                                        >
+                                        <h4 className="text-blue-500 hover:underline">
                                             {achievement.name}
-                                        </Link>
+                                        </h4>
                                     </td>
                                     <td className="px-4 py-2">
                                         {achievement.description}

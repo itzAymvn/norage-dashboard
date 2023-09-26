@@ -6,7 +6,7 @@ import { useTransition } from "react";
 import { useState } from "react";
 import { updateUserCommands } from "@/app/actions";
 
-const Commands = ({ user, setUser }: { user: User; setUser: any }) => {
+const Commands = ({ user }: { user: User }) => {
     const [isPending, startTransition] = useTransition();
     const [commands, setCommands] = useState(user.commands);
 
@@ -14,13 +14,8 @@ const Commands = ({ user, setUser }: { user: User; setUser: any }) => {
         const data = await updateUserCommands(user.discord_id, commands);
 
         if (data?.success) {
-            setUser({
-                ...user,
-                commands: commands,
-            });
-
             toast.success(
-                `Successfully updated commands for ${user.discord_name}`
+                `Successfully updated commands for ${user.discord?.username}`
             );
         } else {
             toast.error("Failed to update commands");

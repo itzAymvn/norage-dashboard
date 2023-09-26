@@ -1,49 +1,50 @@
 "use client";
 
 import { User } from "@/app/types";
-import { updateBlacklist } from "@/app/actions";
-import { useTransition } from "react";
+import { UpdatePremium } from "@/app/actions";
+import { useTransition, useState } from "react";
 import toast from "react-hot-toast";
 
-const Blacklist = ({ user, setUser }: { user: User; setUser: any }) => {
+const Premium = ({ user }: { user: User }) => {
     const [isPending, startTransition] = useTransition();
+    const [isChecked, setIsChecked] = useState(user.premium);
 
-    const toggleBlacklist = async () => {
-        const data = await updateBlacklist(user.discord_id, !user.blacklisted);
+    const togglePremium = async () => {
+        const data = await UpdatePremium(user.discord_id, !isChecked);
 
         if (data?.success) {
-            setUser({
-                ...user,
-                blacklisted: !user.blacklisted,
-            });
-
-            toast.success(data?.message);
+            toast.success(
+                `Successfully ${
+                    !isChecked ? "enabled" : "disabled"
+                } premium for ${user.discord?.username}`
+            );
+            setIsChecked(!isChecked);
         } else {
-            toast.error(data?.message);
+            toast.error("Failed to update premium status");
         }
     };
 
     return (
         <div className="flex flex-col gap-2">
-            <label className="text-white">Blacklisted</label>
+            <label className="text-white">Premium User</label>
             <div className="flex items-center">
                 <button
                     className={`${
-                        user.blacklisted ? "bg-red-500" : "bg-gray-400"
+                        isChecked ? "bg-green-500" : "bg-gray-400"
                     } relative inline-block w-10 h-6 rounded-full transition-transform duration-300 ease-in-out`}
                     onClick={() => {
-                        startTransition(toggleBlacklist);
+                        startTransition(togglePremium);
                     }}
                     disabled={isPending}
                 >
                     <div
                         className={`${
-                            user.blacklisted ? "translate-x-4" : "translate-x-0"
+                            isChecked ? "translate-x-4" : "translate-x-0"
                         } absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ease-in-out`}
                     ></div>
                 </button>
                 <span className="text-white ml-2">
-                    {user.blacklisted ? "Yes" : "No"}
+                    {isChecked ? "Yes" : "No"}
                 </span>
 
                 {isPending && (
@@ -56,4 +57,4 @@ const Blacklist = ({ user, setUser }: { user: User; setUser: any }) => {
     );
 };
 
-export default Blacklist;
+export default Premium;

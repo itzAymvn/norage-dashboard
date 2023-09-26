@@ -6,6 +6,7 @@ import Premium from "./models/Premium";
 import Blacklist from "./models/Blacklist";
 import Users from "./models/Users";
 import Usercommands from "./models/Usercommands";
+import { revalidateTag } from "next/cache";
 import { User } from "./types";
 
 import { cookies } from "next/headers";
@@ -34,6 +35,7 @@ export const UpdatePremium = async (
                 discord_id: discord_id,
             });
             await newPremium.save();
+
             return {
                 success: true,
                 message: "Successfully added premium to user.",
@@ -58,31 +60,22 @@ export const updateBlacklist = async (
     });
 
     if (blacklistExists !== null) {
-        if (!blacklisted) {
-            await Blacklist.deleteOne({ discord_id: discord_id });
-            return {
-                success: true,
-                message: "Successfully removed blacklist from user.",
-            };
-        }
+        await Blacklist.deleteOne({ discord_id: discord_id });
+        return {
+            success: true,
+            message: "Successfully removed blacklist from user.",
+        };
     } else {
-        if (blacklisted) {
-            const newBlacklist = new Blacklist({
-                discord_id: discord_id,
-            });
-            await newBlacklist.save();
+        const newBlacklist = new Blacklist({
+            discord_id: discord_id,
+        });
+        await newBlacklist.save();
 
-            return {
-                success: true,
-                message: "Successfully added blacklist to user.",
-            };
-        }
+        return {
+            success: true,
+            message: "Successfully added blacklist to user.",
+        };
     }
-
-    return {
-        success: false,
-        message: "Something went wrong.",
-    };
 };
 
 export const updateBugHunter = async (
@@ -99,13 +92,6 @@ export const updateBugHunter = async (
         return {
             success: false,
             message: "User not found.",
-        };
-    }
-
-    if (user.bug_hunter === bug_hunter) {
-        return {
-            success: false,
-            message: "User is already a bug hunter.",
         };
     }
 
@@ -185,6 +171,205 @@ export const getUsers = async (): Promise<{
             success: false,
             message: "Something went wrong.",
             users: [],
+        };
+    }
+};
+
+export const getUser = async (
+    id: string
+): Promise<{ success: boolean; message: string; user: User | null }> => {
+    try {
+        const fetchOptions: any = {
+            headers: {
+                cookie: cookies(),
+            },
+            cache: "force-cache",
+            next: {
+                tags: [`getUser-${id}`],
+            },
+        };
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${id}`,
+            fetchOptions
+        );
+
+        const user = await response.json();
+
+        return {
+            success: true,
+            message: "Successfully retrieved user.",
+            user: user,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: "Something went wrong.",
+            user: null,
+        };
+    }
+};
+
+const isValidateDiscordId = async (id: string): Promise<boolean> => {
+    try {
+        const fetchOptions: any = {
+            headers: {
+                cookie: cookies(),
+            },
+            cache: "force-cache",
+        };
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/discord/users/${id}`,
+            fetchOptions
+        );
+
+        const user = await response.json();
+        if (user?.error) {
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        return false;
+    }
+};
+
+const isValidateMinecraftUuid = async (id: string): Promise<boolean> => {
+    try {
+        const fetchOptions: any = {
+            headers: {
+                cookie: cookies(),
+            },
+            cache: "force-cache",
+        };
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/minecraft/${id}`,
+            fetchOptions
+        );
+
+        const user = await response.json();
+        if (user?.error) {
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        return false;
+    }
+};
+
+export const UpdateUserDiscord = async (
+    id: string,
+    discord_id: string
+): Promise<{ success: boolean; message: string }> => {
+    try {
+        await connectDb();
+
+        const user = await Users.findOne({
+            _id: id,
+        });
+
+        if (user === null) {
+            return {
+                success: false,
+                message: "User not found.",
+            };
+        }
+
+        // Check if ID is valid
+        const isValidDiscordId = await isValidateDiscordId(discord_id);
+
+        if (!isValidDiscordId) {
+            return {
+                success: false,
+                message: "Invalid discord id.",
+            };
+        }
+
+        const userWithDiscordId = await Users.findOne({
+            discord_id: discord_id,
+            _id: { $ne: id },
+        });
+
+        if (userWithDiscordId !== null) {
+            return {
+                success: false,
+                message: "This discord id is already in use.",
+            };
+        }
+
+        user.discord_id = discord_id;
+
+        await user.save();
+
+        revalidateTag(`getUser-${id}`);
+
+        return {
+            success: true,
+            message: "Successfully updated discord id.",
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: "Something went wrong.",
+        };
+    }
+};
+
+export const UpdateUserMinecraft = async (
+    id: string,
+    minecraft_uuid: string
+): Promise<{ success: boolean; message: string }> => {
+    try {
+        await connectDb();
+
+        const user = await Users.findOne({
+            _id: id,
+        });
+
+        if (user === null) {
+            return {
+                success: false,
+                message: "User not found.",
+            };
+        }
+
+        const isValidMinecraftUuid = await isValidateMinecraftUuid(
+            minecraft_uuid
+        );
+
+        if (!isValidMinecraftUuid) {
+            return {
+                success: false,
+                message: "Invalid minecraft uuid.",
+            };
+        }
+
+        const userWithMinecraftUuid = await Users.findOne({
+            minecraft_uuid: minecraft_uuid,
+            _id: { $ne: id },
+        });
+
+        if (userWithMinecraftUuid !== null) {
+            return {
+                success: false,
+                message: "This minecraft uuid is already in use.",
+            };
+        }
+
+        user.minecraft_uuid = minecraft_uuid;
+
+        await user.save();
+
+        revalidateTag(`getUser-${id}`);
+
+        return {
+            success: true,
+            message: "Successfully updated minecraft uuid.",
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: "Something went wrong.",
         };
     }
 };
