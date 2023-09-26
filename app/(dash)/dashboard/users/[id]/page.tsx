@@ -62,7 +62,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 discord_avatar: discordData.avatarURL,
                 minecraft_uuid: editedUUID,
                 minecraft_name: minecraftData.name || "Invalid UUID",
-                minecraft_avatar: minecraftData.avatar,
+                minecraft_avatar: `https://crafatar.com/avatars/${editedUUID}?overlay=true`,
             };
 
             // Return the updated user
@@ -113,7 +113,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     discord_name: discordData.username || "Invalid ID",
                     discord_avatar: discordData.avatarURL,
                     minecraft_name: minecraftData.name || "Invalid UUID",
-                    minecraft_avatar: minecraftData.avatar,
+                    minecraft_avatar: `https://crafatar.com/avatars/${data.minecraft_uuid}?overlay=true`,
                 };
 
                 setUser(updatedUser);

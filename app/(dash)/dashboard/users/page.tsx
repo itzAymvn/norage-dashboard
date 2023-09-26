@@ -1,93 +1,89 @@
-"use client";
-
-import Image from "next/image";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { User } from "@/app/types";
 import Loader from "@/app/components/Loader";
 import Usercard from "@/app/components/Usercard";
+import Searchuser from "@/app/components/Searchuser";
+import { getUsers } from "@/app/actions";
+import { cookies } from "next/headers";
+const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-const Page = () => {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [users, setUsers] = useState<User[]>([]);
-    const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+const Page = async ({
+    params,
+    searchParams,
+}: {
+    params: { slug: string };
+    searchParams?: { [key: string]: string | string[] | undefined };
+}) => {
+    const { success, message, users } = await getUsers();
 
-    useEffect(() => {
-        setIsLoading(true);
+    // Create a copy of the users array
+    // This is so we can filter the users array without affecting the original
+    const renderedUsers = users;
 
-        const getUsers = async () => {
-            const res = await fetch("/api/users");
-            const data = await res.json();
-            return data;
-        };
+    // If the request was not successful, return an error message
+    if (!success) {
+        return <p className="text-red-500">{message}</p>;
+    }
 
-        getUsers().then((data) => {
-            Promise.all(
-                data.map(async (user: User) => {
-                    try {
-                        // Fetch the discord and minecraft data for each user
-                        const [discordRes, minecraftRes] = await Promise.all([
-                            fetch(`/api/discord/users/${user.discord_id}`),
-                            fetch(`/api/minecraft/${user.minecraft_uuid}`),
-                        ]);
-                        const [discordData, minecraftData] = await Promise.all([
-                            discordRes.json(),
-                            minecraftRes.json(),
-                        ]);
+    // Set the cookies for the fetch request
+    // Because the api only allows logged in users to access it
+    const fetchOptions: any = {
+        method: "GET",
+        headers: {
+            cookies: cookies(),
+        },
+    };
 
-                        // Update the user with the new data
-                        const updatedUser = {
-                            ...user,
-                            discord_name: discordData.username,
-                            minecraft_name: minecraftData.name,
-                            minecraft_avatar: minecraftData.avatar,
-                        };
+    // Loop through each user and fetch their minecraft and discord data
+    for (const user of users) {
+        try {
+            const mcData = await fetch(
+                `http://sessionserver.mojang.com/session/minecraft/profile/${user.minecraft_uuid}`
+            );
+            const discordData = await fetch(
+                `${NEXT_PUBLIC_BASE_URL}/api/discord/users/${user.discord_id}`,
+                fetchOptions
+            );
 
-                        // Return the updated user
-                        return updatedUser;
-                    } catch (error) {
-                        console.error(error);
-                        return user;
-                    }
-                })
-            ).then((updatedUsers) => {
-                setUsers(updatedUsers);
-                setFilteredUsers(updatedUsers); // Initialize filteredUsers with all users
-                setIsLoading(false);
-            });
+            const mcJson = await mcData.json();
+            const discordJson = await discordData.json();
+
+            user.minecraft_avatar = `https://crafatar.com/avatars/${user?.minecraft_uuid}?overlay=true`;
+            user.minecraft_name = mcJson.name;
+            user.discord_name = discordJson.username;
+        } catch (err) {
+            return user;
+        }
+    }
+
+    // If there is a search query, filter the users array
+    if (searchParams?.search) {
+        const searchQuery = searchParams.search.toString().toLowerCase();
+
+        // Filter the users array
+        const filteredUsers = users.filter((user) => {
+            return (
+                user?.discord_id?.toLowerCase()?.includes(searchQuery) ||
+                user?.minecraft_uuid?.toLowerCase()?.includes(searchQuery) ||
+                user?.minecraft_name?.toLowerCase()?.includes(searchQuery) ||
+                user?.discord_name?.toLowerCase()?.includes(searchQuery)
+            );
         });
-    }, []);
 
-    useEffect(() => {
-        // Filter users based on search query when searchQuery changes
-        const filtered = users.filter(
-            (user) =>
-                user.discord_id.includes(searchQuery) ||
-                user.minecraft_uuid.includes(searchQuery) ||
-                user.minecraft_name.includes(searchQuery) ||
-                user.discord_name.includes(searchQuery)
-        );
-        setFilteredUsers(filtered);
-    }, [searchQuery, users]);
+        // Update the users array with the filtered users
+        renderedUsers.splice(0, users?.length, ...filteredUsers);
+    }
 
+    // Return the page
     return (
         <>
-            <input
-                type="text"
-                placeholder="Search by Discord ID, Minecraft UUID, Minecraft Name, or Discord Name"
-                className="bg-gray-800 text-white border p-4 rounded-lg mb-4 w-full"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-            />
+            <Searchuser />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {isLoading ? (
+                {renderedUsers === null ? (
                     <Loader />
-                ) : filteredUsers.length === 0 ? (
+                ) : renderedUsers.length === 0 ? (
                     <p className="text-gray-400">No users to display.</p>
                 ) : (
-                    filteredUsers.map((user, i) => (
+                    renderedUsers.map((user, i) => (
                         <Usercard key={i} user={user} />
                     ))
                 )}
