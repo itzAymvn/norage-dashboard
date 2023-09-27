@@ -1,7 +1,12 @@
+// Components
 import Loader from "@/app/components/Loader";
-import Usercard from "@/app/components/Usercard";
-import Searchuser from "@/app/components/Searchuser";
+import Usercard from "@/app/components/Users/Usercard";
+import Searchuser from "@/app/components/Users/Searchuser";
+
+// Actions
 import { getUsers } from "@/app/actions";
+
+// Next / Types
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

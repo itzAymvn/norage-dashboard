@@ -1,40 +1,39 @@
 "use client";
 
 import { User } from "@/app/types";
-import { updateBugHunter } from "@/app/actions";
+import { UpdatePremium } from "@/app/actions";
 import { useTransition, useState } from "react";
 import toast from "react-hot-toast";
 
-const Bughunter = ({ user }: { user: User }) => {
+const Premium = ({ user }: { user: User }) => {
     const [isPending, startTransition] = useTransition();
-    const [isChecked, setIsChecked] = useState(user.bug_hunter);
+    const [isChecked, setIsChecked] = useState(user.premium);
 
-    const toggleBugHunter = async () => {
-        const data = await updateBugHunter(user.discord_id, !user.bug_hunter);
+    const togglePremium = async () => {
+        const data = await UpdatePremium(user.discord_id, !isChecked);
 
         if (data?.success) {
             toast.success(
                 `Successfully ${
                     !isChecked ? "enabled" : "disabled"
-                } bug hunter for ${user.discord?.username}`
+                } premium for ${user.discord?.username}`
             );
-
             setIsChecked(!isChecked);
         } else {
-            toast.error(data?.message);
+            toast.error("Failed to update premium status");
         }
     };
 
     return (
-        <div className="flex flex-col gap-2">
-            <label className="text-white">Bug Hunter</label>
+        <div className="flex flex-col gap-2 bg-gray-800 p-4 rounded-lg shadow-md">
+            <label className="text-white">Premium User</label>
             <div className="flex items-center">
                 <button
                     className={`${
-                        isChecked ? "bg-blue-500" : "bg-gray-400"
+                        isChecked ? "bg-green-500" : "bg-gray-400"
                     } relative inline-block w-10 h-6 rounded-full transition-transform duration-300 ease-in-out`}
                     onClick={() => {
-                        startTransition(toggleBugHunter);
+                        startTransition(togglePremium);
                     }}
                     disabled={isPending}
                 >
@@ -58,4 +57,4 @@ const Bughunter = ({ user }: { user: User }) => {
     );
 };
 
-export default Bughunter;
+export default Premium;

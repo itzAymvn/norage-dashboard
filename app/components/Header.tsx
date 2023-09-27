@@ -1,5 +1,8 @@
+// Next
 import Image from "next/image";
 import Link from "next/link";
+
+// Components
 import Signout from "./Buttons/Signout";
 
 const Header = () => {

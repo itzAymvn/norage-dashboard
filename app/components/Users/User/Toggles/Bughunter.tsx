@@ -1,23 +1,24 @@
 "use client";
 
 import { User } from "@/app/types";
-import { updateBlacklist } from "@/app/actions";
+import { updateBugHunter } from "@/app/actions";
 import { useTransition, useState } from "react";
 import toast from "react-hot-toast";
 
-const Blacklist = ({ user }: { user: User }) => {
+const Bughunter = ({ user }: { user: User }) => {
     const [isPending, startTransition] = useTransition();
-    const [isChecked, setIsChecked] = useState(user.blacklisted);
+    const [isChecked, setIsChecked] = useState(user.bug_hunter);
 
-    const toggleBlacklist = async () => {
-        const data = await updateBlacklist(user.discord_id, !user.blacklisted);
+    const toggleBugHunter = async () => {
+        const data = await updateBugHunter(user.discord_id, !user.bug_hunter);
 
         if (data?.success) {
             toast.success(
                 `Successfully ${
                     !isChecked ? "enabled" : "disabled"
-                } blacklist for ${user.discord?.username}`
+                } bug hunter for ${user.discord?.username}`
             );
+
             setIsChecked(!isChecked);
         } else {
             toast.error(data?.message);
@@ -25,15 +26,15 @@ const Blacklist = ({ user }: { user: User }) => {
     };
 
     return (
-        <div className="flex flex-col gap-2">
-            <label className="text-white">Blacklisted</label>
+        <div className="flex flex-col gap-2 bg-gray-800 p-4 rounded-lg shadow-md">
+            <label className="text-white">Bug Hunter</label>
             <div className="flex items-center">
                 <button
                     className={`${
-                        isChecked ? "bg-red-500" : "bg-gray-400"
+                        isChecked ? "bg-blue-500" : "bg-gray-400"
                     } relative inline-block w-10 h-6 rounded-full transition-transform duration-300 ease-in-out`}
                     onClick={() => {
-                        startTransition(toggleBlacklist);
+                        startTransition(toggleBugHunter);
                     }}
                     disabled={isPending}
                 >
@@ -57,4 +58,4 @@ const Blacklist = ({ user }: { user: User }) => {
     );
 };
 
-export default Blacklist;
+export default Bughunter;

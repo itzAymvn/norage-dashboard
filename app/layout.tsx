@@ -24,7 +24,7 @@ export default async function RootLayout({
 }) {
     return (
         <SessionProvider>
-            <html lang="en">
+            <html lang="en" className="scroll-smooth">
                 <body className={inter.className + " bg-gray-800"}>
                     {children}
                 </body>

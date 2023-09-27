@@ -52,15 +52,23 @@ const Minecraft = ({ user }: { user: User }) => {
                         onChange={(e) => setMuuid(e.target.value)}
                     />
                     <button
-                        className="absolute inset-y-0 right-0 px-2 py-1 bg-blue-500 text-white rounded-r-md hover:bg-blue-600"
+                        className={
+                            "absolute inset-y-0 right-0 px-2 py-1 text-white rounded-r-md hover:bg-blue-600" +
+                            (isPending || muuid === user.minecraft_uuid
+                                ? " cursor-not-allowed"
+                                : "")
+                        }
                         type="button"
-                        disabled={isPending}
+                        disabled={isPending || muuid === user.minecraft_uuid}
                         onClick={() => {
                             startTransition(updateMincraft);
                         }}
                     >
                         {isPending ? (
-                            <FontAwesomeIcon icon={faSpinner} />
+                            <FontAwesomeIcon
+                                icon={faSpinner}
+                                className="animate-spin"
+                            />
                         ) : (
                             <FontAwesomeIcon icon={faPenToSquare} />
                         )}

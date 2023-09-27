@@ -1,9 +1,16 @@
+// Components
+import Achievements from "@/app/components/Users/User/Achievements";
+import Toggles from "@/app/components/Users/User/Toggles";
+import Userdata from "@/app/components/Users/User/Userdata";
+
+// Actions
 import { getUser } from "@/app/actions";
-import Achievements from "@/app/components/Achievements";
-import Toggles from "@/app/components/Toggles";
-import Userdata from "@/app/components/User/data";
-import { Toaster } from "react-hot-toast";
+
+// Next / Types
 import { Metadata } from "next";
+
+// Libs
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
     title: "NoRage | User",
@@ -20,11 +27,11 @@ export default async function Page({ params }: { params: { id: string } }) {
     }
 
     return (
-        <>
+        <div className="flex flex-col gap-y-5">
             <Userdata user={user!} />
             <Toggles user={user!} />
             <Achievements user={user!} />
             <Toaster />
-        </>
+        </div>
     );
 }

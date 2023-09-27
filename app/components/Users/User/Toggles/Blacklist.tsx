@@ -1,39 +1,39 @@
 "use client";
 
 import { User } from "@/app/types";
-import { UpdatePremium } from "@/app/actions";
+import { updateBlacklist } from "@/app/actions";
 import { useTransition, useState } from "react";
 import toast from "react-hot-toast";
 
-const Premium = ({ user }: { user: User }) => {
+const Blacklist = ({ user }: { user: User }) => {
     const [isPending, startTransition] = useTransition();
-    const [isChecked, setIsChecked] = useState(user.premium);
+    const [isChecked, setIsChecked] = useState(user.blacklisted);
 
-    const togglePremium = async () => {
-        const data = await UpdatePremium(user.discord_id, !isChecked);
+    const toggleBlacklist = async () => {
+        const data = await updateBlacklist(user.discord_id, !user.blacklisted);
 
         if (data?.success) {
             toast.success(
                 `Successfully ${
                     !isChecked ? "enabled" : "disabled"
-                } premium for ${user.discord?.username}`
+                } blacklist for ${user.discord?.username}`
             );
             setIsChecked(!isChecked);
         } else {
-            toast.error("Failed to update premium status");
+            toast.error(data?.message);
         }
     };
 
     return (
-        <div className="flex flex-col gap-2">
-            <label className="text-white">Premium User</label>
+        <div className="flex flex-col gap-2 bg-gray-800 p-4 rounded-lg shadow-md">
+            <label className="text-white">Blacklisted</label>
             <div className="flex items-center">
                 <button
                     className={`${
-                        isChecked ? "bg-green-500" : "bg-gray-400"
+                        isChecked ? "bg-red-500" : "bg-gray-400"
                     } relative inline-block w-10 h-6 rounded-full transition-transform duration-300 ease-in-out`}
                     onClick={() => {
-                        startTransition(togglePremium);
+                        startTransition(toggleBlacklist);
                     }}
                     disabled={isPending}
                 >
@@ -57,4 +57,4 @@ const Premium = ({ user }: { user: User }) => {
     );
 };
 
-export default Premium;
+export default Blacklist;

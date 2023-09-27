@@ -56,12 +56,17 @@ const Discord = ({ user }: { user: User }) => {
                         onChange={(e) => setDiscordID(e.target.value)}
                     />
                     <button
-                        className="absolute inset-y-0 right-0 px-2 py-1 bg-blue-500 text-white rounded-r-md hover:bg-blue-600"
+                        className={
+                            "absolute inset-y-0 right-0 px-2 py-1 text-white rounded-r-md hover:bg-blue-600" +
+                            (isPending || discordID === user.discord_id
+                                ? " cursor-not-allowed"
+                                : "")
+                        }
                         type="button"
                         onClick={() => {
                             startTransition(updateDiscord);
                         }}
-                        disabled={isPending}
+                        disabled={isPending || discordID === user.discord_id}
                     >
                         {isPending ? (
                             <FontAwesomeIcon
