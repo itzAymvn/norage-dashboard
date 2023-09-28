@@ -1,4 +1,3 @@
-import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import { Metadata } from "next";
 
@@ -9,11 +8,10 @@ export const metadata: Metadata = {
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
     return (
-        <>
+        <main className="min-h-screen">
             <Header />
-            <main className="bg-gray-800 p-4 h-full">{children}</main>
-            <Footer />
-        </>
+            <main className="bg-gray-800 p-4 h-100">{children}</main>
+        </main>
     );
 };
 

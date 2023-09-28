@@ -1,6 +1,5 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { User } from "@/app/types";
+import Achievement from "./Achievements/Achievement";
 
 const Achievements = ({ user }: { user: User }) => {
     return (
@@ -15,24 +14,10 @@ const Achievements = ({ user }: { user: User }) => {
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {user.achievements.map((achievement) => (
-                        <div
+                        <Achievement
                             key={achievement.name}
-                            className="p-4 bg-gray-800 text-white rounded-lg relative"
-                        >
-                            <h4 className="text-blue-500 hover:underline">
-                                {achievement.name}
-                            </h4>
-                            <p>{achievement.description}</p>
-                            <p className="text-sm">
-                                Date:{" "}
-                                {new Date(
-                                    achievement.date
-                                ).toLocaleDateString()}
-                            </p>
-                            <button className="absolute bottom-0 right-0 p-2 text-white rounded-lg hover:text-red-500 transition duration-200 ease-in-out">
-                                <FontAwesomeIcon icon={faTrash} />
-                            </button>
-                        </div>
+                            achievement={achievement}
+                        />
                     ))}
                 </div>
             )}

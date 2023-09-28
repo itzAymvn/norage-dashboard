@@ -1,22 +1,22 @@
 "use client";
 
-import { User } from "@/app/types";
+import { Guild } from "@/app/types";
 import { updateBlacklist } from "@/app/actions";
 import { useTransition, useState } from "react";
 import toast from "react-hot-toast";
 
-const Blacklist = ({ user }: { user: User }) => {
+const Blacklist = ({ guild }: { guild: Guild }) => {
     const [isPending, startTransition] = useTransition();
-    const [isChecked, setIsChecked] = useState(user.blacklisted);
+    const [isChecked, setIsChecked] = useState(guild.blacklisted);
 
     const toggleBlacklist = async () => {
-        const data = await updateBlacklist(user.discord_id);
+        const data = await updateBlacklist(guild.guild_id);
 
         if (data?.success) {
             toast.success(
                 `Successfully ${
                     !isChecked ? "enabled" : "disabled"
-                } blacklist for ${user.discord?.username}`
+                } blacklist for ${guild.guildData.name}`
             );
             setIsChecked(!isChecked);
         } else {

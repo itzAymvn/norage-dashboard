@@ -22,12 +22,15 @@ const Page = () => {
                     </p>
                 </Link>
 
-                <div className="bg-gray-700 rounded-md p-4 space-y-2 cursor-pointer hover:cursor-not-allowed">
+                <Link
+                    href="/dashboard/guilds"
+                    className="bg-gray-700 rounded-md p-4 space-y-2 cursor-pointer hover:bg-gray-600"
+                >
                     <h1 className="text-white text-xl font-bold">Guilds</h1>
                     <p className="text-gray-400">
                         View all guilds the bot is in and edit their settings.
                     </p>
-                </div>
+                </Link>
 
                 <div className="p-4 space-y-2 cursor-pointer">
                     <h1 className="text-white text-xl font-bold">More Soon</h1>

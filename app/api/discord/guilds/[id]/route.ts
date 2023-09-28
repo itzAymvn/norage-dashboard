@@ -15,7 +15,7 @@ export async function GET(
         };
 
         const response = await fetch(
-            `https://discord.com/api/guilds/${id}`,
+            `https://discord.com/api/guilds/${id}/preview`,
             requestOptions
         );
 
