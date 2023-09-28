@@ -50,6 +50,6 @@ export const config = {
         "/api/users/:path*",
         "/api/discord/:path*",
         "/api/guilds/:path*",
-        "/api/minecrfat/:path*",
+        "/api/minecraft/:path*",
     ],
 };
