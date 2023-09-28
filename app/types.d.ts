@@ -50,7 +50,6 @@ export interface Guild {
     guild_id: string;
     prefix: string;
     blacklisted: boolean;
-    iconURL: string;
     guildData: {
         iconURL: string;
         name: string;
