@@ -22,10 +22,23 @@ export async function GET(request: Request) {
                 await new Promise((resolve) => setTimeout(resolve, 250));
             }
 
-            updatedGuilds.push({
-                ...guild,
-                guildData,
-            });
+            if (guildData.id) {
+                updatedGuilds.push({
+                    ...guild,
+                    guildData,
+                });
+            } else {
+                updatedGuilds.push({
+                    ...guild,
+                    guildData: {
+                        iconURL: "",
+                        name: "Unknown",
+                        description: "Could not fetch guild data",
+                        approximate_member_count: 0,
+                        approximate_presence_count: 0,
+                    },
+                });
+            }
         } catch (error: any) {
             updatedGuilds.push({
                 ...guild,
