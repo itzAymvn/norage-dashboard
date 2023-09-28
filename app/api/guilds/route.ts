@@ -23,3 +23,5 @@ export async function GET(request: Request) {
         status: 200,
     });
 }
+
+export const revalidate = 600000; // 10 minutes
