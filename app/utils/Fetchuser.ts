@@ -1,5 +1,4 @@
 import { User } from "../types";
-import { cookies } from "next/headers";
 
 export const fetchMinecraftData = async (user: User) => {
     const minecraftResponse = await fetch(
@@ -12,18 +11,31 @@ export const fetchMinecraftData = async (user: User) => {
 };
 
 export const fetchDiscordData = async (user: User) => {
-    const fetchOptions: any = {
-        method: "GET",
-        headers: {
-            cookies: cookies(),
-        },
-    };
+    try {
+        const requestOptions: any = {
+            method: "GET",
+            headers: {
+                Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            },
+            redirect: "follow",
+        };
 
-    const discordResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/discord/users/${user.discord_id}`,
-        fetchOptions
-    );
+        const discordResponse = await fetch(
+            `https://discord.com/api/users/${user.discord_id}`,
+            requestOptions
+        );
 
-    const discordData = await discordResponse.json();
-    return discordData;
+        const discordData = await discordResponse.json();
+
+        if (discordData?.id) {
+            return {
+                ...discordData,
+                avatarURL: `https://cdn.discordapp.com/avatars/${user.discord_id}/${discordData.avatar}.png`,
+            };
+        } else {
+            return { error: "User not found" };
+        }
+    } catch (error) {
+        return { error: "something went wrong" };
+    }
 };

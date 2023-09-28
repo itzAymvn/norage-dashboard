@@ -33,7 +33,9 @@ export async function middleware(request: NextRequest) {
     if (path.startsWith("/api/")) {
         if (!token) {
             return NextResponse.json(
-                { error: "You must be logged in to access this resource" },
+                {
+                    error: "401 Unauthorized",
+                },
                 { status: 401 }
             );
         }
@@ -48,8 +50,6 @@ export const config = {
         "/login/",
         "/dashboard/:path*",
         "/api/users/:path*",
-        "/api/discord/:path*",
         "/api/guilds/:path*",
-        "/api/minecraft/:path*",
     ],
 };

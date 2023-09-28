@@ -1,18 +1,30 @@
-import { cookies } from "next/headers";
-
 export const fetchGuild = async (GuildID: string) => {
-    const fetchOptions: any = {
-        method: "GET",
-        headers: {
-            cookies: cookies(),
-        },
-    };
+    try {
+        const requestOptions: any = {
+            method: "GET",
+            headers: {
+                Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            },
+        };
 
-    const discordResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/discord/guilds/${GuildID}`,
-        fetchOptions
-    );
+        const guildResponse = await fetch(
+            `https://discord.com/api/guilds/${GuildID}/preview`,
+            requestOptions
+        );
 
-    const discordData = await discordResponse.json();
-    return discordData;
+        const guildData = await guildResponse.json();
+
+        if (guildData?.id) {
+            return {
+                ...guildData,
+                iconURL: guildData.icon
+                    ? `https://cdn.discordapp.com/icons/${guildData.id}/${guildData.icon}.png`
+                    : null,
+            };
+        } else {
+            return { error: "Guild not found" };
+        }
+    } catch (error) {
+        return { error: "something went wrong" };
+    }
 };
