@@ -19,7 +19,7 @@ export async function GET(request: Request) {
 
             // Introduce a delay after each iteration except the last one
             if (index < clone.length - 1) {
-                await new Promise((resolve) => setTimeout(resolve, 150)); // 1000 milliseconds = 1 second
+                await new Promise((resolve) => setTimeout(resolve, 250));
             }
 
             updatedGuilds.push({
