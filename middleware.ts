@@ -29,19 +29,6 @@ export async function middleware(request: NextRequest) {
     if (path === "/login" && token) {
         return NextResponse.redirect(dashboardLink);
     }
-
-    if (path.startsWith("/api/")) {
-        if (!token) {
-            return NextResponse.json(
-                {
-                    error: "401 Unauthorized",
-                },
-                { status: 401 }
-            );
-        }
-
-        return NextResponse.next();
-    }
 }
 
 export const config = {
@@ -49,7 +36,5 @@ export const config = {
         "/",
         "/login/",
         "/dashboard/:path*",
-        "/api/users/:path*",
-        "/api/guilds/:path*",
     ],
 };

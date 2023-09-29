@@ -8,6 +8,7 @@ import { getUsers } from "@/app/actions";
 
 // Next / Types
 import { Metadata } from "next";
+import { User } from "@/app/types";
 
 export const metadata: Metadata = {
     title: "NoRage | Users",
@@ -21,14 +22,27 @@ const Page = async ({
     params: { slug: string };
     searchParams?: { [key: string]: string | string[] | undefined };
 }) => {
-    const { success, message, users } = await getUsers();
+    const {
+        success,
+        message,
+        users,
+    }: {
+        success: boolean;
+        message: string;
+        users: any;
+    } = await getUsers();
 
     // Create a copy of the users array
     const renderedUsers = users;
 
     // If the request was not successful, return an error message
     if (!success) {
+        console.error(users);
         return <p className="text-red-500">{message}</p>;
+    }
+
+    if (!users.map) {
+        return <div className="p-4 bg-red-500 text-white">{users.error}</div>;
     }
 
     // If there is a search query, filter the users array
@@ -36,7 +50,7 @@ const Page = async ({
         const searchQuery = searchParams.search.toString().toLowerCase();
 
         // Filter the users array
-        const filteredUsers = users.filter((user) => {
+        const filteredUsers = users.filter((user: User) => {
             return (
                 user?.discord_id?.toLowerCase()?.includes(searchQuery) ||
                 user?.minecraft_uuid?.toLowerCase()?.includes(searchQuery) ||
@@ -60,7 +74,7 @@ const Page = async ({
                 ) : renderedUsers.length === 0 ? (
                     <p className="text-gray-400">No users to display.</p>
                 ) : (
-                    renderedUsers.map((user, i) => (
+                    renderedUsers.map((user: User, i: number) => (
                         <Usercard key={i} user={user} />
                     ))
                 )}
@@ -70,3 +84,4 @@ const Page = async ({
 };
 
 export default Page;
+export const dynamic = "force-dynamic";

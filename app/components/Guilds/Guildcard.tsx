@@ -13,7 +13,11 @@ const Guildcard = ({ guild }: { guild: Guild }) => {
             <div className="flex flex-col items-center">
                 <div className="flex-shrink-0">
                     <Image
-                        src={`${guild.guildData.iconURL}` || "/discord.png"}
+                        src={`${
+                            guild.guildData.iconURL === null
+                                ? "/discord.png"
+                                : guild.guildData.iconURL
+                        }`}
                         alt={guild.guildData.name + " icon"}
                         width={128}
                         height={128}
@@ -25,6 +29,10 @@ const Guildcard = ({ guild }: { guild: Guild }) => {
                     <h3 className="text-lg font-semibold text-center text-white">
                         {guild.guildData.name}
                     </h3>
+
+                    <p className="text-sm text-center text-gray-400">
+                        {guild.guild_id}
+                    </p>
 
                     <p className="text-sm text-center text-gray-400">
                         <span>

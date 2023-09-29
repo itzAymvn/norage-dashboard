@@ -13,7 +13,7 @@ const Updateprefix = ({ guild }: { guild: Guild }) => {
 
     const ChangePrefix = async () => {
         const { success, message } = await UpdateGuildPrefix(
-            guild.guild_id,
+            guild,
             prefix
         );
 

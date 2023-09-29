@@ -10,7 +10,7 @@ const Premium = ({ user }: { user: User }) => {
     const [isChecked, setIsChecked] = useState(user.premium);
 
     const togglePremium = async () => {
-        const data = await UpdatePremium(user.discord_id, !isChecked);
+        const data = await UpdatePremium(user);
 
         if (data?.success) {
             toast.success(

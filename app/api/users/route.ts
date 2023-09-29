@@ -3,7 +3,8 @@ import { User } from "@/app/types";
 import connectDb from "@/app/utils/Connect";
 import { fetchMinecraftData, fetchDiscordData } from "@/app/utils/Fetchuser";
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
+    console.log("GET /api/users");
     try {
         await connectDb();
         const users = await Users.find({}, { __v: 0 });
@@ -11,8 +12,10 @@ export async function GET(request: Request) {
 
         const updatedUsers = await Promise.all(
             clone.map(async (user: User) => {
-                const minecraftData = await fetchMinecraftData(user);
-                const discordData = await fetchDiscordData(user);
+                const minecraftData = await fetchMinecraftData(
+                    user.minecraft_uuid
+                );
+                const discordData = await fetchDiscordData(user.discord_id);
 
                 return {
                     ...user,
@@ -37,4 +40,4 @@ export async function GET(request: Request) {
     }
 }
 
-export const revalidate = 600000; // 10 minutes
+export const dynamic = "force-dynamic";

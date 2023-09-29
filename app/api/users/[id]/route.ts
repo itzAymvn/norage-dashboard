@@ -5,12 +5,12 @@ import Usercommands from "@/app/models/Usercommands";
 import { fetchMinecraftData, fetchDiscordData } from "@/app/utils/Fetchuser";
 import connectDb from "@/app/utils/Connect";
 
-export async function GET(
+export async function POST(
     request: Request,
     { params }: { params: { id: string } }
 ) {
     const { id } = params;
-
+    console.log(`GET /api/users/${id}`);
     try {
         await connectDb();
         const user = await Users.findOne({ _id: id }, { __v: 0 });
@@ -24,8 +24,8 @@ export async function GET(
 
         const userClone = JSON.parse(JSON.stringify(user));
         const [minecraftData, discordData] = await Promise.all([
-            fetchMinecraftData(userClone),
-            fetchDiscordData(userClone),
+            fetchMinecraftData(userClone.minecraft_uuid),
+            fetchDiscordData(userClone.discord_id),
         ]);
 
         userClone.minecraft = {
@@ -57,3 +57,5 @@ export async function GET(
         );
     }
 }
+
+export const dynamic = "force-dynamic";

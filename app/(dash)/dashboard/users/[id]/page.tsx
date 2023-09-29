@@ -35,3 +35,5 @@ export default async function Page({ params }: { params: { id: string } }) {
         </div>
     );
 }
+
+export const dynamic = "force-dynamic";

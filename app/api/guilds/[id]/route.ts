@@ -3,11 +3,12 @@ import Blacklist from "@/app/models/Blacklist";
 import connectDb from "@/app/utils/Connect";
 import { fetchGuild } from "@/app/utils/Fetchserver";
 
-export async function GET(
+export async function POST(
     request: Request,
     { params }: { params: { id: string } }
 ) {
     const { id } = params;
+    console.log(`GET /api/guilds/${id}`)
     try {
         await connectDb();
         const guild = await Guild.findOne({ _id: id }, { __v: 0 });
@@ -40,3 +41,5 @@ export async function GET(
         );
     }
 }
+
+export const dynamic = "force-dynamic";

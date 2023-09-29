@@ -10,7 +10,7 @@ const Bughunter = ({ user }: { user: User }) => {
     const [isChecked, setIsChecked] = useState(user.bug_hunter);
 
     const toggleBugHunter = async () => {
-        const data = await updateBugHunter(user.discord_id, !user.bug_hunter);
+        const data = await updateBugHunter(user);
 
         if (data?.success) {
             toast.success(

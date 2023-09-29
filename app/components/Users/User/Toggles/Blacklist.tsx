@@ -10,7 +10,7 @@ const Blacklist = ({ user }: { user: User }) => {
     const [isChecked, setIsChecked] = useState(user.blacklisted);
 
     const toggleBlacklist = async () => {
-        const data = await updateBlacklist(user.discord_id);
+        const data = await updateBlacklist(user);
 
         if (data?.success) {
             toast.success(

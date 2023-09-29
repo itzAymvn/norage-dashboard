@@ -1,16 +1,14 @@
-import { User } from "../types";
-
-export const fetchMinecraftData = async (user: User) => {
+export const fetchMinecraftData = async (uuid: string) => {
     const minecraftResponse = await fetch(
         "http://sessionserver.mojang.com/session/minecraft/profile/" +
-            user.minecraft_uuid
+            uuid.replace(/-/g, "")
     );
 
     const minecraftData = await minecraftResponse.json();
     return minecraftData;
 };
 
-export const fetchDiscordData = async (user: User) => {
+export const fetchDiscordData = async (id: string) => {
     try {
         const requestOptions: any = {
             method: "GET",
@@ -21,7 +19,7 @@ export const fetchDiscordData = async (user: User) => {
         };
 
         const discordResponse = await fetch(
-            `https://discord.com/api/users/${user.discord_id}`,
+            `https://discord.com/api/users/${id}`,
             requestOptions
         );
 
@@ -30,7 +28,7 @@ export const fetchDiscordData = async (user: User) => {
         if (discordData?.id) {
             return {
                 ...discordData,
-                avatarURL: `https://cdn.discordapp.com/avatars/${user.discord_id}/${discordData.avatar}.png`,
+                avatarURL: `https://cdn.discordapp.com/avatars/${discordData.id}/${discordData.avatar}.png`,
             };
         } else {
             return { error: "User not found" };
@@ -39,3 +37,5 @@ export const fetchDiscordData = async (user: User) => {
         return { error: "something went wrong" };
     }
 };
+
+// example usage di

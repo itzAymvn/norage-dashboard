@@ -18,7 +18,7 @@ const Commands = ({ user }: { user: User }) => {
             return;
         }
 
-        const data = await updateUserCommands(user.discord_id, commands);
+        const data = await updateUserCommands(user, commands);
 
         if (data?.success) {
             toast.success(

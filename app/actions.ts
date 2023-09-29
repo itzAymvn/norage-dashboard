@@ -1,77 +1,76 @@
 "use server";
 
+import mongoose from "mongoose";
 import connectDb from "./utils/Connect";
-
 import Premium from "./models/Premium";
 import Blacklist from "./models/Blacklist";
 import Users from "./models/Users";
 import Usercommands from "./models/Usercommands";
-import { revalidateTag } from "next/cache";
-import { User } from "./types";
 
-import { cookies } from "next/headers";
-import mongoose from "mongoose";
+import { Guild as GuildType, User } from "./types";
+
 import Guild from "./models/Guilds";
+import { revalidateTag } from "next/cache";
+import { fetchDiscordData, fetchMinecraftData } from "./utils/Fetchuser";
 
 export const UpdatePremium = async (
-    discord_id: string,
-    premium: boolean
+    user: User
 ): Promise<{ success: boolean; message: string }> => {
-    await connectDb();
+    try {
+        await connectDb();
 
-    const premiumExists = await Premium.findOne({
-        discord_id: discord_id,
-    });
+        const premiumExists = await Premium.findOne({
+            discord_id: user.discord_id,
+        });
 
-    if (premiumExists !== null) {
-        if (!premium) {
-            await Premium.deleteOne({ discord_id: discord_id });
+        if (premiumExists !== null) {
+            await Premium.deleteOne({ discord_id: user.discord_id });
+            revalidateTag(`getUser-${user._id}`);
             return {
                 success: true,
                 message: "Successfully removed premium from user.",
             };
-        }
-    } else {
-        if (premium) {
+        } else {
             const newPremium = new Premium({
-                discord_id: discord_id,
+                discord_id: user.discord_id,
             });
             await newPremium.save();
-
+            revalidateTag(`getUser-${user._id}`);
             return {
                 success: true,
                 message: "Successfully added premium to user.",
             };
         }
+    } catch (error) {
+        return {
+            success: false,
+            message: "Something went wrong.",
+        };
     }
-
-    return {
-        success: false,
-        message: "Something went wrong.",
-    };
 };
 
 export const updateBlacklist = async (
-    discord_id: string
+    user: User
 ): Promise<{ success: boolean; message: string }> => {
     await connectDb();
 
     const blacklistExists = await Blacklist.findOne({
-        discord_id: discord_id,
+        discord_id: user.discord_id,
     });
 
     if (blacklistExists !== null) {
-        await Blacklist.deleteOne({ discord_id: discord_id });
+        await Blacklist.deleteOne({ discord_id: user.discord_id });
+        revalidateTag(`getUser-${user._id}`);
         return {
             success: true,
             message: "Successfully removed blacklist from user.",
         };
     } else {
         const newBlacklist = new Blacklist({
-            discord_id: discord_id,
+            discord_id: user.discord_id,
         });
         await newBlacklist.save();
-
+        revalidateTag(`getUser-${user._id}`);
         return {
             success: true,
             message: "Successfully added blacklist to user.",
@@ -80,25 +79,24 @@ export const updateBlacklist = async (
 };
 
 export const updateBugHunter = async (
-    discord_id: string,
-    bug_hunter: boolean
+    user: User
 ): Promise<{ success: boolean; message: string }> => {
     await connectDb();
 
-    const user = await Users.findOne({
-        discord_id: discord_id,
+    const userExists = await Users.findOne({
+        discord_id: user.discord_id,
     });
 
-    if (user === null) {
+    if (userExists === null) {
         return {
             success: false,
             message: "User not found.",
         };
     }
 
-    user.bug_hunter = bug_hunter;
-
-    await user.save();
+    userExists.bug_hunter = !userExists.bug_hunter;
+    await userExists.save();
+    revalidateTag(`getUser-${user._id}`);
 
     return {
         success: true,
@@ -107,25 +105,27 @@ export const updateBugHunter = async (
 };
 
 export const updateUserCommands = async (
-    discord_id: string,
+    user: User,
     commands: number
 ): Promise<{ success: boolean; message: string }> => {
     try {
         await connectDb();
 
-        const user = await Usercommands.findOne({
-            discord_id: discord_id,
+        const userExists = await Usercommands.findOne({
+            discord_id: user.discord_id,
         });
 
-        if (user === null) {
+        if (userExists === null) {
             const newUser = new Usercommands({
-                discord_id: discord_id,
+                discord_id: user.discord_id,
                 commands: commands,
             });
             await newUser.save();
+            revalidateTag(`getUser-${user._id}`);
         } else {
-            user.commands = commands;
-            await user.save();
+            userExists.commands = commands;
+            await userExists.save();
+            revalidateTag(`getUser-${user._id}`);
         }
 
         return {
@@ -133,6 +133,7 @@ export const updateUserCommands = async (
             message: "Successfully updated user commands.",
         };
     } catch (error) {
+        console.log(error);
         return {
             success: false,
             message: "Something went wrong.",
@@ -147,12 +148,9 @@ export const getUsers = async (): Promise<{
 }> => {
     try {
         const fetchOptions: any = {
-            headers: {
-                cookie: cookies(),
-            },
-            cache: "force-cache",
+            method: "POST",
             next: {
-                tags: ["getUsers"],
+                revalidate: 600,
             },
         };
         const response = await fetch(
@@ -181,12 +179,10 @@ export const getUser = async (
 ): Promise<{ success: boolean; message: string; user: User | null }> => {
     try {
         const fetchOptions: any = {
-            headers: {
-                cookie: cookies(),
-            },
-            cache: "force-cache",
+            method: "POST",
             next: {
-                tags: [`getUser-${id}`],
+                tags: [`getUser-${id}`], // using _id as a tag
+                revalidate: 600,
             },
         };
         const response = await fetch(
@@ -212,19 +208,9 @@ export const getUser = async (
 
 const isValidateDiscordId = async (id: string): Promise<boolean> => {
     try {
-        const fetchOptions: any = {
-            headers: {
-                cookie: cookies(),
-            },
-            cache: "force-cache",
-        };
-        const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/api/discord/users/${id}`,
-            fetchOptions
-        );
+        const { error } = await fetchDiscordData(id);
 
-        const user = await response.json();
-        if (user?.error) {
+        if (error) {
             return false;
         }
 
@@ -236,19 +222,9 @@ const isValidateDiscordId = async (id: string): Promise<boolean> => {
 
 const isValidateMinecraftUuid = async (id: string): Promise<boolean> => {
     try {
-        const fetchOptions: any = {
-            headers: {
-                cookie: cookies(),
-            },
-            cache: "force-cache",
-        };
-        const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/api/minecraft/${id}`,
-            fetchOptions
-        );
+        const { errorMessage } = await fetchMinecraftData(id);
 
-        const user = await response.json();
-        if (user?.error) {
+        if (errorMessage) {
             return false;
         }
 
@@ -301,8 +277,6 @@ export const UpdateUserDiscord = async (
         user.discord_id = discord_id;
 
         await user.save();
-
-        revalidateTag(`getUser-${id}`);
 
         return {
             success: true,
@@ -360,8 +334,6 @@ export const UpdateUserMinecraft = async (
         user.minecraft_uuid = minecraft_uuid;
 
         await user.save();
-
-        revalidateTag(`getUser-${id}`);
 
         return {
             success: true,
@@ -424,12 +396,9 @@ export const getGuilds = async (): Promise<{
 }> => {
     try {
         const fetchOptions: any = {
-            headers: {
-                cookie: cookies(),
-            },
-            cache: "force-cache",
+            method: "POST",
             next: {
-                tags: ["getGuilds"],
+                revalidate: 600,
             },
         };
         const response = await fetch(
@@ -458,12 +427,10 @@ export const getGuild = async (
 ): Promise<{ success: boolean; message: string; guild: any | null }> => {
     try {
         const fetchOptions: any = {
-            headers: {
-                cookie: cookies(),
-            },
-            cache: "force-cache",
+            method: "POST",
             next: {
-                tags: [`getGuild-${id}`],
+                tags: [`getGuild-${id}`], // using _id as a tag
+                revalidate: 600,
             },
         };
         const response = await fetch(
@@ -496,33 +463,68 @@ export const getGuild = async (
 };
 
 export const UpdateGuildPrefix = async (
-    id: string,
+    guild: GuildType,
     prefix: string
 ): Promise<{ success: boolean; message: string }> => {
     try {
         await connectDb();
 
-        const guild = await Guild.findOne({
-            guild_id: id,
+        const guildExists = await Guild.findOne({
+            guild_id: guild.guild_id,
         });
 
-        if (guild === null) {
+        if (guildExists === null) {
             return {
                 success: false,
                 message: "Guild not found.",
             };
         }
 
-        guild.prefix = prefix;
+        guildExists.prefix = prefix;
+        await guildExists.save();
 
-        await guild.save();
-
-        revalidateTag(`getGuild-${id}`);
+        revalidateTag(`getGuild-${guild._id}`);
 
         return {
             success: true,
             message: "Successfully updated guild prefix.",
         };
+    } catch (error) {
+        return {
+            success: false,
+            message: "Something went wrong.",
+        };
+    }
+};
+
+export const UpdateGuildBlacklist = async (
+    guild: GuildType
+): Promise<{ success: boolean; message: string }> => {
+    try {
+        await connectDb();
+
+        const blacklistExists = await Blacklist.findOne({
+            discord_id: guild.guild_id,
+        });
+
+        if (blacklistExists !== null) {
+            await Blacklist.deleteOne({ discord_id: guild.guild_id });
+            revalidateTag(`getGuild-${guild._id}`);
+            return {
+                success: true,
+                message: "Successfully removed blacklist from guild.",
+            };
+        } else {
+            const newBlacklist = new Blacklist({
+                discord_id: guild.guild_id,
+            });
+            await newBlacklist.save();
+            revalidateTag(`getGuild-${guild._id}`);
+            return {
+                success: true,
+                message: "Successfully added blacklist to guild.",
+            };
+        }
     } catch (error) {
         return {
             success: false,
