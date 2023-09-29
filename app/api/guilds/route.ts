@@ -16,11 +16,6 @@ export async function POST(request: Request) {
             try {
                 const guildData = await fetchGuild(guild.guild_id);
 
-                // Introduce a delay after each iteration except the last one
-                if (index < clone.length - 1) {
-                    await new Promise((resolve) => setTimeout(resolve, 300));
-                }
-
                 if (guildData.id) {
                     updatedGuilds.push({
                         ...guild,
@@ -32,9 +27,9 @@ export async function POST(request: Request) {
                         guildData: {
                             iconURL: null,
                             name: null,
-                            description: "Could not fetch guild data",
-                            approximate_member_count: 0,
-                            approximate_presence_count: 0,
+                            description: null,
+                            approximate_member_count: -1,
+                            approximate_presence_count: -1,
                         },
                     });
                 }
@@ -44,9 +39,9 @@ export async function POST(request: Request) {
                     guildData: {
                         iconURL: null,
                         name: null,
-                        description: "Could not fetch guild data",
-                        approximate_member_count: 0,
-                        approximate_presence_count: 0,
+                        description: null,
+                        approximate_member_count: -1,
+                        approximate_presence_count: -1,
                     },
                 });
             }
