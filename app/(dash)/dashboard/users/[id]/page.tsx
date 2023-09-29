@@ -11,6 +11,8 @@ import { Metadata } from "next";
 
 // Libs
 import { Toaster } from "react-hot-toast";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWarning } from "@fortawesome/free-solid-svg-icons";
 
 export const metadata: Metadata = {
     title: "NoRage | User",
@@ -23,7 +25,16 @@ export default async function Page({ params }: { params: { id: string } }) {
     const { success, message, user } = await getUser(id);
 
     if (!success) {
-        return <p className="text-red-500">{message}</p>;
+        return (
+            <div className="min-h-full flex flex-col justify-center items-center text-white">
+                <FontAwesomeIcon
+                    icon={faWarning}
+                    className="text-9xl text-yellow-500"
+                />
+                <h1 className="text-4xl font-semibold mt-5">Error</h1>
+                <p className="text-xl mt-2">{message}</p>
+            </div>
+        );
     }
 
     return (

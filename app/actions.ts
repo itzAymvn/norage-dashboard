@@ -190,12 +190,20 @@ export const getUser = async (
             fetchOptions
         );
 
-        const user = await response.json();
+        const data = await response.json();
+
+        if (response.status !== 200) {
+            return {
+                success: false,
+                message: data.error,
+                user: null,
+            };
+        }
 
         return {
             success: true,
             message: "Successfully retrieved user.",
-            user: user,
+            user: data,
         };
     } catch (error) {
         return {
@@ -438,12 +446,12 @@ export const getGuild = async (
             fetchOptions
         );
 
-        const guild = await response.json();
+        const data = await response.json();
 
-        if (guild.error) {
+        if (response.status !== 200) {
             return {
                 success: false,
-                message: guild.error,
+                message: data.error,
                 guild: null,
             };
         }
@@ -451,7 +459,7 @@ export const getGuild = async (
         return {
             success: true,
             message: "Successfully retrieved guild.",
-            guild: guild,
+            guild: data,
         };
     } catch (error) {
         return {

@@ -4,16 +4,31 @@ import Blacklist from "@/app/models/Blacklist";
 import Usercommands from "@/app/models/Usercommands";
 import { fetchMinecraftData, fetchDiscordData } from "@/app/utils/Fetchuser";
 import connectDb from "@/app/utils/Connect";
+import mongoose from "mongoose";
 
 export async function POST(
     request: Request,
     { params }: { params: { id: string } }
 ) {
     const { id } = params;
-    console.log(`GET /api/users/${id}`);
     try {
         await connectDb();
-        const user = await Users.findOne({ _id: id }, { __v: 0 });
+
+        if (mongoose.isValidObjectId(id) === false) {
+            return new Response(
+                JSON.stringify({
+                    error: "The ID you provided is not a valid mongo object ID",
+                }),
+                {
+                    headers: { "content-type": "application/json" },
+                    status: 400, // Use appropriate HTTP status code
+                }
+            );
+        }
+
+        const user = await Users.findById(
+            new mongoose.Types.ObjectId(String(id))
+        );
 
         if (user === null) {
             return new Response(JSON.stringify({ error: "User not found" }), {
@@ -46,13 +61,14 @@ export async function POST(
 
         return new Response(JSON.stringify(userClone), {
             headers: { "content-type": "application/json" },
+            status: 200,
         });
     } catch (error) {
         return new Response(
             JSON.stringify({ error: "Internal Server Error" }),
             {
                 headers: { "content-type": "application/json" },
-                status: 500, // Use appropriate HTTP status code
+                status: 500,
             }
         );
     }

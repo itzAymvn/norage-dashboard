@@ -4,7 +4,6 @@ import { fetchGuild } from "@/app/utils/Fetchserver";
 import connectDb from "@/app/utils/Connect";
 
 export async function POST(request: Request) {
-    console.log("GET /api/guilds");
     try {
         await connectDb();
         const guilds = await Guild.find({}, { __v: 0 });
@@ -31,8 +30,8 @@ export async function POST(request: Request) {
                     updatedGuilds.push({
                         ...guild,
                         guildData: {
-                            iconURL: "",
-                            name: "Unknown",
+                            iconURL: null,
+                            name: null,
                             description: "Could not fetch guild data",
                             approximate_member_count: 0,
                             approximate_presence_count: 0,
@@ -44,7 +43,7 @@ export async function POST(request: Request) {
                     ...guild,
                     guildData: {
                         iconURL: null,
-                        name: "Unknown",
+                        name: null,
                         description: "Could not fetch guild data",
                         approximate_member_count: 0,
                         approximate_presence_count: 0,
@@ -58,10 +57,13 @@ export async function POST(request: Request) {
             status: 200,
         });
     } catch (error) {
-        return new Response(JSON.stringify(error), {
-            headers: { "content-type": "application/json" },
-            status: 500,
-        });
+        return new Response(
+            JSON.stringify({ error: "Internal Server Error" }),
+            {
+                headers: { "content-type": "application/json" },
+                status: 500,
+            }
+        );
     }
 }
 

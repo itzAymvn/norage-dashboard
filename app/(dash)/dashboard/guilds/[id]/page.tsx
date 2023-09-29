@@ -1,5 +1,7 @@
 import { getGuild } from "@/app/actions";
 import Guilddata from "@/app/components/Guilds/Guild/Guilddata";
+import { faWarning } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 export const metadata: Metadata = {
@@ -13,7 +15,16 @@ export default async function Page({ params }: { params: { id: string } }) {
     const { success, message, guild } = await getGuild(id);
 
     if (!success) {
-        return <p className="text-red-500">{message}</p>;
+        return (
+            <div className="min-h-full flex flex-col justify-center items-center text-white">
+                <FontAwesomeIcon
+                    icon={faWarning}
+                    className="text-9xl text-yellow-500"
+                />
+                <h1 className="text-4xl font-semibold mt-5">Error</h1>
+                <p className="text-xl mt-2">{message}</p>
+            </div>
+        );
     }
 
     return (
