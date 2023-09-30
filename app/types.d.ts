@@ -48,13 +48,11 @@ export interface User {
 export interface Guild {
     _id: string;
     guild_id: string;
+    guild_icon: string;
+    guild_name: string;
+    guild_description: string;
     prefix: string;
     blacklisted: boolean;
-    guildData: {
-        iconURL: string;
-        name: string;
-        description: string;
-        approximate_member_count: number;
-        approximate_presence_count: number;
-    };
+    createdAt: Date | string;
+    updatedAt: Date | string;
 }

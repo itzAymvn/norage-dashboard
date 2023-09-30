@@ -7,7 +7,7 @@ const blacklistSchema: mongoose.Schema = new mongoose.Schema(
             required: true,
         },
     },
-    { collection: "blacklists" }
+    { collection: "blacklists", timestamps: true }
 );
 
 const Blacklist =

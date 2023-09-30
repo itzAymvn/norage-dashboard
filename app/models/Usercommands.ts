@@ -12,7 +12,7 @@ const botSchema: mongoose.Schema = new mongoose.Schema(
             required: true,
         },
     },
-    { collection: "bots" }
+    { collection: "bots", timestamps: true }
 );
 
 const Usercommands =

@@ -45,7 +45,7 @@ export async function POST(
 
         userClone.minecraft = {
             ...minecraftData,
-            avatarURL: `https://crafatar.com/avatars/${userClone.minecraft_uuid}?overlay`,
+            avatarURL: `https://mc-heads.net/avatar/${minecraftData.id}`,
         };
         userClone.discord = discordData;
 

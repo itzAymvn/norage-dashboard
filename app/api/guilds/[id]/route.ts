@@ -1,7 +1,6 @@
 import Guild from "@/app/models/Guilds";
 import Blacklist from "@/app/models/Blacklist";
 import connectDb from "@/app/utils/Connect";
-import { fetchGuild } from "@/app/utils/Fetchserver";
 import mongoose from "mongoose";
 
 export async function POST(
@@ -25,7 +24,8 @@ export async function POST(
         }
 
         const guild = await Guild.findById(
-            new mongoose.Types.ObjectId(String(id))
+            new mongoose.Types.ObjectId(String(id)),
+            { __v: 0 }
         );
 
         if (guild === null) {
@@ -35,23 +35,20 @@ export async function POST(
             });
         }
 
-        const guildClone = JSON.parse(JSON.stringify(guild));
-
-        const guildData = await fetchGuild(guildClone.guild_id);
         const blacklist = await Blacklist.findOne(
-            { discord_id: guildClone.guild_id },
+            { discord_id: guild.guild_id },
             { __v: 0 }
         );
 
+        // send the guild data to the server
         return new Response(
             JSON.stringify({
-                ...guildClone,
-                guildData,
-                blacklisted: blacklist === null ? false : true,
+                ...guild.toObject(),
+                blacklist: blacklist === null ? false : true,
             }),
             {
                 headers: { "content-type": "application/json" },
-                status: 200,
+                status: 200, // Use appropriate HTTP status code
             }
         );
     } catch (error) {

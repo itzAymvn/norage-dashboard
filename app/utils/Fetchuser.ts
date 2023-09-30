@@ -15,6 +15,9 @@ export const fetchDiscordData = async (id: string) => {
             headers: {
                 Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
             },
+            next: {
+                revalidate: 60,
+            },
             redirect: "follow",
         };
 

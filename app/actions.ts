@@ -152,6 +152,9 @@ export const getUsers = async (): Promise<{
             next: {
                 revalidate: 600,
             },
+            headers: {
+                Authorization: process.env.NEXTAUTH_SECRET,
+            },
         };
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_BASE_URL}/api/users`,
@@ -183,6 +186,9 @@ export const getUser = async (
             next: {
                 tags: [`getUser-${id}`], // using _id as a tag
                 revalidate: 600,
+            },
+            headers: {
+                Authorization: process.env.NEXTAUTH_SECRET,
             },
         };
         const response = await fetch(
@@ -402,32 +408,35 @@ export const getGuilds = async (): Promise<{
     message: string;
     guilds: any[];
 }> => {
-    try {
-        const fetchOptions: any = {
-            method: "POST",
-            next: {
-                revalidate: 600,
-            },
-        };
-        const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/api/guilds`,
-            fetchOptions
-        );
+    const fetchOptions: any = {
+        method: "POST",
+        next: {
+            revalidate: 600,
+        },
+        headers: {
+            Authorization: process.env.NEXTAUTH_SECRET,
+        },
+    };
+    const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/guilds`,
+        fetchOptions
+    );
 
-        const guilds = await response.json();
+    const data = await response.json();
 
-        return {
-            success: true,
-            message: "Successfully retrieved guilds.",
-            guilds: guilds,
-        };
-    } catch (error) {
+    if (response.status !== 200) {
         return {
             success: false,
-            message: "Something went wrong.",
+            message: data.error,
             guilds: [],
         };
     }
+
+    return {
+        success: true,
+        message: "Successfully retrieved guilds.",
+        guilds: data,
+    };
 };
 
 export const getGuild = async (
@@ -439,6 +448,9 @@ export const getGuild = async (
             next: {
                 tags: [`getGuild-${id}`], // using _id as a tag
                 revalidate: 600,
+            },
+            headers: {
+                Authorization: process.env.NEXTAUTH_SECRET,
             },
         };
         const response = await fetch(

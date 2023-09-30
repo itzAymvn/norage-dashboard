@@ -7,7 +7,7 @@ const premiumSchema = new mongoose.Schema(
             required: true,
         },
     },
-    { collection: "premiumusers" }
+    { collection: "premiumusers", timestamps: true }
 );
 
 const Premium =

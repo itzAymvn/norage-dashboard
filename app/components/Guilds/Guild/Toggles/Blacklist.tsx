@@ -16,7 +16,7 @@ const Blacklist = ({ guild }: { guild: Guild }) => {
             toast.success(
                 `Successfully ${
                     !isChecked ? "enabled" : "disabled"
-                } blacklist for ${guild.guildData.name}`
+                } blacklist for ${guild.guild_name}`
             );
             setIsChecked(!isChecked);
         } else {

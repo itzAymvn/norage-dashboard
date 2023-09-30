@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ["cdn.discordapp.com", "crafatar.com"],
+        domains: ["cdn.discordapp.com", "crafatar.com", "mc-heads.net"],
         remotePatterns: [
             {
                 protocol: "https",
@@ -20,6 +20,12 @@ const nextConfig = {
                 hostname: "crafatar.com",
                 port: "",
                 pathname: "/avatars/**",
+            },
+            {
+                protocol: "https",
+                hostname: "mc-heads.net",
+                port: "",
+                pathname: "/avatar/**",
             },
         ],
     },

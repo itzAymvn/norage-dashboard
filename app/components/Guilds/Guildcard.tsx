@@ -9,31 +9,26 @@ const Guildcard = ({ guild }: { guild: Guild }) => {
     return (
         <div
             className="bg-gradient-to-br from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900
-            p-4 rounded-lg shadow-md hover:shadow-lg transition duration-200 ease-in-out transform break-words relative"
+    p-4 rounded-lg shadow-md hover:shadow-lg transition duration-200 ease-in-out transform break-words relative"
         >
             <div className="flex flex-col items-center">
                 <div className="flex-shrink-0">
                     <Image
                         src={`${
-                            guild.guildData.iconURL === null
+                            guild.guild_icon === null
                                 ? "/discord.png"
-                                : guild.guildData.iconURL
+                                : guild.guild_icon
                         }`}
-                        alt={guild.guildData.name + " icon"}
+                        alt={guild.guild_name}
                         width={128}
                         height={128}
-                        className={
-                            "rounded-full" +
-                            (guild.guildData.iconURL === null
-                                ? " border-4 border-red-600"
-                                : "")
-                        }
+                        className={"rounded-full"}
                     />
                 </div>
 
                 <div className="mt-4">
                     <h3 className="text-lg font-semibold text-center text-white">
-                        {guild.guildData.name === null ? (
+                        {guild.guild_name === null ? (
                             <>
                                 <FontAwesomeIcon
                                     icon={faInfoCircle}
@@ -42,7 +37,7 @@ const Guildcard = ({ guild }: { guild: Guild }) => {
                                 <span className="ml-1">Unknown</span>
                             </>
                         ) : (
-                            guild.guildData.name
+                            guild.guild_name
                         )}
                     </h3>
 
@@ -50,22 +45,22 @@ const Guildcard = ({ guild }: { guild: Guild }) => {
                         {guild.guild_id}
                     </p>
 
+                    {/* Display createdAt */}
                     <p className="text-sm text-center text-gray-400">
-                        <span>
-                            {guild.guildData.approximate_member_count} members
-                        </span>
-                        <span className="mx-1">•</span>
-                        <span>
-                            {guild.guildData.approximate_presence_count} online
-                        </span>
+                        Joined At: {new Date(guild.createdAt).toLocaleString()}
+                    </p>
+
+                    {/* Display updatedAt */}
+                    <p className="text-sm text-center text-gray-400">
+                        Updated At: {new Date(guild.updatedAt).toLocaleString()}
                     </p>
 
                     <div className="mt-2">
                         <Link
                             href={`/dashboard/guilds/${guild._id}`}
                             className="flex items-center justify-center px-4 py-2 bg-gray-600 hover:bg-gray-700
-                        rounded-md shadow-sm text-sm font-medium text-white transition duration-200 ease-in-out
-                        transform hover:scale-105"
+                rounded-md shadow-sm text-sm font-medium text-white transition duration-200 ease-in-out
+                transform hover:scale-105"
                         >
                             <FontAwesomeIcon icon={faEye} className="mr-2" />
                             View
@@ -75,13 +70,13 @@ const Guildcard = ({ guild }: { guild: Guild }) => {
             </div>
 
             {
-                // if the guild wasnt fectehd we will add an icon top left so the user knows
-                guild.guildData.name === null ? (
+                // if the guild wasn't fetched, add an icon top left so the user knows
+                guild.guild_name === null ? (
                     <div
                         className={
                             "absolute top-0 right-0 p-2 hover:cursor-pointer"
                         }
-                        title="This guild could not be fetched due to discord api ratelimits. Please try again in a few minutes."
+                        title="This guild could not be fetched due to Discord API rate limits. Please try again in a few minutes."
                     >
                         <FontAwesomeIcon
                             icon={faInfoCircle}

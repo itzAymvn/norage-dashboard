@@ -9,6 +9,8 @@ import { getUsers } from "@/app/actions";
 // Next / Types
 import { Metadata } from "next";
 import { User } from "@/app/types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWarning } from "@fortawesome/free-solid-svg-icons";
 
 export const metadata: Metadata = {
     title: "NoRage | Users",
@@ -72,7 +74,15 @@ const Page = async ({
                 {renderedUsers === null ? (
                     <Loader />
                 ) : renderedUsers.length === 0 ? (
-                    <p className="text-gray-400">No users to display.</p>
+                    <div className="min-h-full mt-8 w-screen flex flex-col justify-center items-center text-white">
+                        <FontAwesomeIcon
+                            icon={faWarning}
+                            className="text-5xl md:text-9xl text-yellow-500"
+                        />
+                        <h1 className="text-3xl md:text-5xl font-semibold mt-5">
+                            No Users Found
+                        </h1>
+                    </div>
                 ) : (
                     renderedUsers.map((user: User, i: number) => (
                         <Usercard key={i} user={user} />
