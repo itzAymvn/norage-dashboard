@@ -1,7 +1,7 @@
 "use client";
 
 import { Guild } from "@/app/types";
-import { UpdateGuildBlacklist } from "@/app/actions";
+import { UpdateGuildBlacklist } from "@/app/actions/Guild";
 import { useTransition, useState } from "react";
 import toast from "react-hot-toast";
 

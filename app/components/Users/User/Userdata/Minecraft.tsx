@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { User } from "@/app/types";
-import { UpdateUserMinecraft } from "@/app/actions";
+import { UpdateUserMinecraft } from "@/app/actions/User";
 import { useTransition, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";

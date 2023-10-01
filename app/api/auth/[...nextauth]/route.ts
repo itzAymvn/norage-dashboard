@@ -25,20 +25,25 @@ const options: AuthOptions = {
 
                 if (!email || !password) return null;
 
-                await connectDb();
+                try {
+                    await connectDb();
 
-                const Admin = await Admins.findOne({ email });
+                    const Admin = await Admins.findOne({ email });
 
-                if (!Admin) return null;
+                    if (!Admin) return null;
 
-                const isValid = await bcryptjs.compare(
-                    password,
-                    Admin.password
-                );
+                    const isValid = await bcryptjs.compare(
+                        password,
+                        Admin.password
+                    );
 
-                if (!isValid) return null;
+                    if (!isValid) return null;
 
-                return Admin;
+                    return Admin;
+                } catch (error) {
+                    console.log(error);
+                    return null;
+                }
             },
         }),
     ],

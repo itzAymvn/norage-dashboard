@@ -31,7 +31,7 @@ export const fetchDiscordData = async (id: string) => {
         if (discordData?.id) {
             return {
                 ...discordData,
-                avatarURL: `https://cdn.discordapp.com/avatars/${discordData.id}/${discordData.avatar}.png`,
+                avatarURL: `https://cdn.discordapp.com/avatars/${discordData.id}/${discordData.avatar}.png?size=1024`,
             };
         } else {
             return { error: "User not found" };

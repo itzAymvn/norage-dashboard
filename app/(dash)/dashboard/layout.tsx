@@ -8,9 +8,12 @@ export const metadata: Metadata = {
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
     return (
-        <main className="min-h-screen">
+        <main className="min-h-screen flex flex-col">
             <Header />
-            <main className="bg-gray-800 p-4 h-100">{children}</main>
+            <main className="bg-gray-800 flex-grow p-4">{children}</main>
+            <footer className="bg-gray-900 p-4 text-center text-white">
+                <p>© {new Date().getFullYear()} NoRage</p>
+            </footer>
         </main>
     );
 };

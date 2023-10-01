@@ -4,7 +4,7 @@ import { User } from "@/app/types";
 import toast from "react-hot-toast";
 import { useTransition } from "react";
 import { useState } from "react";
-import { updateUserCommands } from "@/app/actions";
+import { updateUserCommands } from "@/app/actions/User";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-regular-svg-icons";
 

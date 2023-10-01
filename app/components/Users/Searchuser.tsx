@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useDebounce } from "usehooks-ts";
 import { faDeleteLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Searchuser = () => {
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
     const debouncedSearchQuery = useDebounce(searchQuery, 350); // Debounce the search query by 350ms
@@ -18,6 +20,13 @@ const Searchuser = () => {
             router.push("/dashboard/users");
         }
     }, [router, debouncedSearchQuery]);
+
+    const handleResetSearch = () => {
+        setSearchQuery(""); // Clear the search query
+        const current = new URLSearchParams(Array.from(searchParams.entries()));
+        current.delete("search"); // Remove the "search" parameter from the URL
+        router.push(`${pathname}?${current.toString()}`);
+    };
 
     return (
         <div className="relative flex items-center">
@@ -32,7 +41,10 @@ const Searchuser = () => {
                     required
                 />
                 <button className="absolute top-0 right-0 p-2.5 h-full text-sm font-medium text-white bg-blue-700 rounded-r-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    <FontAwesomeIcon icon={faDeleteLeft} />
+                    <FontAwesomeIcon
+                        icon={faDeleteLeft}
+                        onClick={handleResetSearch}
+                    />
                 </button>
             </div>
         </div>

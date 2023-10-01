@@ -4,7 +4,7 @@ import Toggles from "@/app/components/Users/User/Toggles";
 import Userdata from "@/app/components/Users/User/Userdata";
 
 // Actions
-import { getUser } from "@/app/actions";
+import { getUser } from "@/app/actions/User";
 
 // Next / Types
 import { Metadata } from "next";

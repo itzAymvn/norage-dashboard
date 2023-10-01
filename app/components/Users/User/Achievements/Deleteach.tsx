@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { Achievement } from "@/app/types";
 
-import { RemoveAchievement } from "@/app/actions";
+import { RemoveAchievement } from "@/app/actions/User";
 import { useTransition } from "react";
 import toast from "react-hot-toast";
 

@@ -1,4 +1,4 @@
-import { getGuild } from "@/app/actions";
+import { getGuild } from "@/app/actions/Guild";
 import Guilddata from "@/app/components/Guilds/Guild/Guilddata";
 import { faWarning } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

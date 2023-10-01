@@ -2,7 +2,6 @@ import Guild from "@/app/models/Guilds";
 import connectDb from "@/app/utils/Connect";
 
 export async function POST(request: Request) {
-    console.log("POST /api/guilds/");
     try {
         await connectDb();
         const guilds = await Guild.find({}, { __v: 0 });

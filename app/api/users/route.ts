@@ -4,7 +4,6 @@ import connectDb from "@/app/utils/Connect";
 import { fetchMinecraftData, fetchDiscordData } from "@/app/utils/Fetchuser";
 
 export async function POST(request: Request) {
-    console.log("POST /api/users");
     try {
         await connectDb();
         const users = await Users.find({}, { __v: 0 });

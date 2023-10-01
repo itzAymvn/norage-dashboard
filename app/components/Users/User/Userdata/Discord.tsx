@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { User } from "@/app/types";
-import { UpdateUserDiscord } from "@/app/actions";
+import { UpdateUserDiscord } from "@/app/actions/User";
 import { useTransition, useState } from "react";
 import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

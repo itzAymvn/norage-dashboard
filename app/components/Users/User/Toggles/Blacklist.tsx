@@ -1,7 +1,7 @@
 "use client";
 
 import { User } from "@/app/types";
-import { updateBlacklist } from "@/app/actions";
+import { updateBlacklist } from "@/app/actions/User";
 import { useTransition, useState } from "react";
 import toast from "react-hot-toast";
 

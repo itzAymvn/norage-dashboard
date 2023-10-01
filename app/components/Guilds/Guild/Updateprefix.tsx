@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Guild } from "@/app/types";
 import { faEdit, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState, useTransition } from "react";
-import { UpdateGuildPrefix } from "@/app/actions";
+import { UpdateGuildPrefix } from "@/app/actions/Guild";
 import toast from "react-hot-toast";
 
 const Updateprefix = ({ guild }: { guild: Guild }) => {
@@ -12,10 +12,7 @@ const Updateprefix = ({ guild }: { guild: Guild }) => {
     const [isPending, startTransition] = useTransition();
 
     const ChangePrefix = async () => {
-        const { success, message } = await UpdateGuildPrefix(
-            guild,
-            prefix
-        );
+        const { success, message } = await UpdateGuildPrefix(guild, prefix);
 
         if (!success) {
             toast.error(message);

@@ -1,4 +1,4 @@
-import { getGuilds } from "@/app/actions";
+import { getGuilds } from "@/app/actions/Guild";
 
 import Loader from "@/app/components/Loader";
 import Guildcard from "@/app/components/Guilds/Guildcard";
@@ -15,20 +15,30 @@ const page = async ({
     params: { slug: string };
     searchParams?: { [key: string]: string | string[] | undefined };
 }) => {
-    const { success, message, guilds } = await getGuilds();
+    const {
+        success,
+        message,
+        guilds,
+    }: {
+        success: boolean;
+        message: string;
+        guilds: any;
+    } = await getGuilds();
 
     // If the request was not successful, return an error message
     if (!success) {
         return (
-            <div className="min-h-full flex flex-col justify-center items-center text-white">
-                <FontAwesomeIcon
-                    icon={faWarning}
-                    className="text-9xl text-yellow-500"
-                />
-                <h1 className="text-4xl font-semibold mt-5">Error</h1>
-                <p className="text-xl mt-2">{message}</p>
+            <div className="p-4 bg-red-500 text-white">
+                {message}
+                <br />
+                <br />
+                Please try again later.
             </div>
         );
+    }
+
+    if (!guilds.map) {
+        return <div className="p-4 bg-red-500 text-white">{guilds.error}</div>;
     }
 
     const renderedGuilds = guilds;
@@ -51,12 +61,13 @@ const page = async ({
     // Return the page
     return (
         <>
-            <Searchguild />
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {renderedGuilds === null ? (
-                    <Loader />
-                ) : renderedGuilds.length === 0 ? (
-                    <div className="min-h-full mt-8 w-screen flex flex-col justify-center items-center text-white">
+            {renderedGuilds === null ? (
+                <Loader />
+            ) : renderedGuilds.length === 0 ? (
+                <>
+                    <Searchguild />
+
+                    <div className="mt-8 w-full h-full flex flex-col justify-center items-center text-white">
                         <FontAwesomeIcon
                             icon={faWarning}
                             className="text-5xl md:text-9xl text-yellow-500"
@@ -65,12 +76,18 @@ const page = async ({
                             No Guilds Found
                         </h1>
                     </div>
-                ) : (
-                    renderedGuilds.map((guild, i) => {
-                        return <Guildcard key={i} guild={guild} />;
-                    })
-                )}
-            </div>
+                </>
+            ) : (
+                <>
+                    <Searchguild />
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {renderedGuilds.map((guild: Guild, i: number) => {
+                            return <Guildcard key={i} guild={guild} />;
+                        })}
+                    </div>
+                </>
+            )}
         </>
     );
 };

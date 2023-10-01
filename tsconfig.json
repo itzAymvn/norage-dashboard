@@ -1,27 +1,27 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "paths": {
-      "@/*": ["./*"]
-    }
-  },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+    "compilerOptions": {
+        "target": "es5", // Specify ECMAScript target version
+        "lib": ["dom", "dom.iterable", "esnext"], // List of library files to be included in the compilation
+        "allowJs": true, // Allow JavaScript files to be compiled
+        "skipLibCheck": true, // Skip type checking of all declaration files (*.d.ts)
+        "strict": true, // Enable all strict type-checking options
+        "noEmit": true, // Do not emit output
+        "esModuleInterop": true, // Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'
+        "module": "esnext", // Specify module code generation
+        "moduleResolution": "bundler", // Specify module resolution strategy
+        "resolveJsonModule": true, // Include modules imported with .json extension
+        "isolatedModules": true, // Transpile each file as a separate module (similar to 'ts.transpileModule')
+        "jsx": "preserve", // Specify JSX code generation
+        "incremental": true, // Enable incremental compilation
+        "plugins": [
+            {
+                "name": "next" // Next.js plugin
+            }
+        ],
+        "paths": {
+            "@/*": ["./*"] // Path alias
+        }
+    },
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"], // Files to include
+    "exclude": ["node_modules"] // Files to exclude
 }
