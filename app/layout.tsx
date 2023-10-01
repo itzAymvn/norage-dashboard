@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import SessionProvider from "./providers/SessionProvider";
+import ProgressProvider from "./providers/ProgressProvider";
 
 // To fix the fontawesome icons not showing up when using SSR
 import { config } from "@fortawesome/fontawesome-svg-core";
@@ -26,7 +27,7 @@ export default async function RootLayout({
         <SessionProvider>
             <html lang="en" className="scroll-smooth">
                 <body className={inter.className + " bg-gray-800"}>
-                    {children}
+                    <ProgressProvider>{children}</ProgressProvider>
                 </body>
             </html>
         </SessionProvider>
