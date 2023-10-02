@@ -53,6 +53,7 @@ export interface Guild {
     guild_description: string;
     prefix: string;
     blacklisted: boolean;
+    is_active: boolean;
     createdAt: Date | string;
     updatedAt: Date | string;
 }

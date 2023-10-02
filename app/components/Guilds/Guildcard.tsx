@@ -69,6 +69,26 @@ const Guildcard = ({ guild }: { guild: Guild }) => {
                 </div>
             </div>
 
+            <div className="absolute top-0 left-0 p-2">
+                {/* guild.is_active */}
+                {
+                    // if active, show a green dot, otherwise show a red dot
+                }
+                {guild.is_active ? (
+                    <div
+                        title="The bot is a member of this guild."
+                        className={
+                            "w-3 h-3 bg-green-500 rounded-full shadow-md"
+                        }
+                    ></div>
+                ) : (
+                    <div
+                        title="The bot is not a member of this guild."
+                        className={"w-3 h-3 bg-red-500 rounded-full shadow-md"}
+                    ></div>
+                )}
+            </div>
+
             {
                 // if the guild wasn't fetched, add an icon top left so the user knows
                 guild.guild_name === null ? (
