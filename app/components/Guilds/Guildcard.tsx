@@ -4,6 +4,7 @@ import { Guild } from "@/app/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-regular-svg-icons";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import Tooltip from "@/app/providers/Tooltip";
 
 const Guildcard = ({ guild }: { guild: Guild }) => {
     return (
@@ -70,22 +71,28 @@ const Guildcard = ({ guild }: { guild: Guild }) => {
             </div>
 
             <div className="absolute top-0 left-0 p-2">
-                {/* guild.is_active */}
-                {
-                    // if active, show a green dot, otherwise show a red dot
-                }
                 {guild.is_active ? (
-                    <div
-                        title="The bot is a member of this guild."
-                        className={
-                            "w-3 h-3 bg-green-500 rounded-full shadow-md"
-                        }
-                    ></div>
+                    <>
+                        <div
+                            data-tooltip-id="tooltip-active-guild"
+                            data-tooltip-content="The bot is a member of this guild."
+                            className={
+                                "w-3 h-3 bg-green-500 rounded-full shadow-md hover:cursor-pointer"
+                            }
+                        ></div>
+                        <Tooltip id="tooltip-active-guild" />
+                    </>
                 ) : (
-                    <div
-                        title="The bot is not a member of this guild."
-                        className={"w-3 h-3 bg-red-500 rounded-full shadow-md"}
-                    ></div>
+                    <>
+                        <div
+                            data-tooltip-id="tooltip-inactive-guild"
+                            data-tooltip-content="The bot is no longer a member of this guild."
+                            className={
+                                "w-3 h-3 bg-red-500 rounded-full shadow-md hover:cursor-pointer"
+                            }
+                        ></div>
+                        <Tooltip id="tooltip-inactive-guild" />
+                    </>
                 )}
             </div>
 
