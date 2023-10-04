@@ -109,7 +109,7 @@ export const UpdateGuildPrefix = async (
         guildExists.prefix = prefix;
         await guildExists.save();
 
-        revalidateTag(`getGuild-${guild._id}`);
+        revalidateTag(`getGuild-${guild._id}`); // using _id as a tag
 
         return {
             success: true,

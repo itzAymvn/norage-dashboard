@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 
 const Blacklist = ({ guild }: { guild: Guild }) => {
     const [isPending, startTransition] = useTransition();
-    const [isChecked, setIsChecked] = useState(guild.blacklisted);
+    const [isChecked, setIsChecked] = useState(guild.blacklist);
 
     const toggleBlacklist = async () => {
         const data = await UpdateGuildBlacklist(guild);
