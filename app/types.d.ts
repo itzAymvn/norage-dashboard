@@ -43,6 +43,7 @@ export interface User {
     bug_hunter: boolean;
     discord?: DiscordUser;
     minecraft?: MinecraftUser;
+    toObject: () => User;
 }
 
 export interface Guild {

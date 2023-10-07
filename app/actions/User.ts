@@ -169,10 +169,17 @@ export const updateUserCommands = async (
     }
 };
 
-export const getUsers = async (): Promise<{
+export const getUsers = async (
+    page: number = 1
+): Promise<{
     success: boolean;
     message: string;
     users: User[];
+    total?: number;
+    available?: {
+        pages: number;
+        users: number;
+    };
 }> => {
     try {
         const fetchOptions: any = {
@@ -183,18 +190,23 @@ export const getUsers = async (): Promise<{
             headers: {
                 Authorization: process.env.NEXTAUTH_SECRET,
             },
+            body: JSON.stringify({
+                page: page,
+            }),
         };
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_BASE_URL}/api/users`,
             fetchOptions
         );
 
-        const users = await response.json();
+        const { users, total, available } = await response.json();
 
         return {
             success: true,
             message: "Successfully retrieved users.",
             users: users,
+            total: total,
+            available: available,
         };
     } catch (error) {
         return {

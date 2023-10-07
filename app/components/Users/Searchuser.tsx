@@ -14,11 +14,9 @@ const Searchuser = () => {
     const debouncedSearchQuery = useDebounce(searchQuery, 350); // Debounce the search query by 350ms
 
     useEffect(() => {
-        if (debouncedSearchQuery) {
-            router.push(`/dashboard/users?search=${debouncedSearchQuery}`);
-        } else {
-            router.push("/dashboard/users");
-        }
+        const current = new URLSearchParams(Array.from(searchParams.entries()));
+        current.set("search", debouncedSearchQuery);
+        router.push(`${pathname}?${current.toString()}`);
     }, [router, debouncedSearchQuery]);
 
     const handleResetSearch = () => {

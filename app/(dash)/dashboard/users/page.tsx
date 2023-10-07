@@ -11,6 +11,7 @@ import { Metadata } from "next";
 import { User } from "@/app/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWarning } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
 export const metadata: Metadata = {
     title: "NoRage | Users",
@@ -24,17 +25,26 @@ const Page = async ({
     params: { slug: string };
     searchParams?: { [key: string]: string | string[] | undefined };
 }) => {
+    const page = searchParams?.page
+        ? parseInt(searchParams.page.toString())
+        : 1;
+
     const {
         success,
         message,
         users,
+        total = 0,
+        available,
     }: {
         success: boolean;
         message: string;
         users: any;
-    } = await getUsers();
-
-    // Create a copy of the users array
+        total?: number;
+        available?: {
+            pages: number;
+            users: number;
+        };
+    } = await getUsers(page);
 
     // If the request was not successful, return an error message
     if (!success) {
@@ -49,7 +59,7 @@ const Page = async ({
     }
 
     if (!users.map) {
-        return <div className="p-4 bg-red-500 text-white">{users.error}</div>;
+        return <div className="p-4 bg-red-500 text-white">{users?.error}</div>;
     }
 
     const renderedUsers = users;
@@ -75,7 +85,6 @@ const Page = async ({
     // Return the page
     return (
         <>
-
             {renderedUsers === null ? (
                 <Loader />
             ) : renderedUsers.length === 0 ? (
@@ -101,6 +110,22 @@ const Page = async ({
                             <Usercard key={i} user={user} />
                         ))}
                     </div>
+
+                    {available?.pages && (
+                        <div className="mt-8 flex flex-row justify-center items-center text-white">
+                            {Array.from(Array(available.pages).keys()).map(
+                                (i) => (
+                                    <Link
+                                        key={i}
+                                        href={`/dashboard/users?page=${i + 1}`}
+                                        className="py-2 px-3 mx-2 rounded-lg bg-gray-700 hover:bg-gray-800 transition duration-200 ease-in-out"
+                                    >
+                                        {i + 1}
+                                    </Link>
+                                )
+                            )}
+                        </div>
+                    )}
                 </>
             )}
         </>

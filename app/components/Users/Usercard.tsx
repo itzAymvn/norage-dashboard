@@ -13,28 +13,26 @@ const Usercard = ({ user }: { user: User }) => {
             p-4 rounded-lg shadow-md hover:shadow-lg transition duration-200 ease-in-out transform break-words relative"
         >
             <div className="flex flex-row space-x-2 justify-start items-center space-y-2">
-                <a href={`https://namemc.com/profile/${user.minecraft_uuid}`}>
-                    <Link
-                        href={
-                            user.discord?.avatarURL === null
-                                ? "https://cdn.discordapp.com/embed/avatars/0.png"
-                                : user.discord?.avatarURL!
+                <Link
+                    href={
+                        user.discord?.avatarURL === null
+                            ? "https://cdn.discordapp.com/embed/avatars/0.png"
+                            : user.discord?.avatarURL!
+                    }
+                >
+                    <Image
+                        width={20}
+                        height={20}
+                        src={
+                            user?.discord?.avatarURL === null
+                                ? "/discord.png"
+                                : user?.discord?.avatarURL!
                         }
-                    >
-                        <Image
-                            width={20}
-                            height={20}
-                            src={
-                                user?.discord?.avatarURL === null
-                                    ? "/discord.png"
-                                    : user?.discord?.avatarURL!
-                            }
-                            alt={`${user.minecraft?.name}'s Avatar`}
-                            quality={100}
-                            className="bg-green-300 w-20 h-20 rounded-lg border-4 border-gray-600"
-                        />
-                    </Link>
-                </a>
+                        alt={`${user.minecraft?.name}'s Avatar`}
+                        quality={100}
+                        className="bg-green-300 w-20 h-20 rounded-lg border-4 border-gray-600"
+                    />
+                </Link>
                 <div className="mt-2 text-1xl font-semibold text-white flex flex-col justify-center space-y-1">
                     <span>
                         <FontAwesomeIcon icon={faDiscord} className="mr-1" />
