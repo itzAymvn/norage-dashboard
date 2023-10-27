@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 const page = async () => {
 	return (
 		<h3 className="text-3xl font-bold text-white">
-			You are viewing the dashboard, <i>you shouldn't be here.</i>
+			You are viewing the dashboard, <i>you shouldn`&apos;`t be here</i>
 		</h3>
 	);
 };
