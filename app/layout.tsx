@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 
 import SessionProvider from "./providers/SessionProvider";
 import ProgressProvider from "./providers/ProgressProvider";
@@ -13,23 +14,26 @@ config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatic
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "NoRage - Dashboard",
-    description: "NoRage Dashboard for the NoRage Discord Bot & MongoDB",
-    keywords: "NoRage, Dashboard, Discord, Bot, MongoDB, Hypixel, Minecraft",
+	title: "NoRage - Dashboard",
+	description: "NoRage Dashboard for the NoRage Discord Bot & MongoDB",
+	keywords: "NoRage, Dashboard, Discord, Bot, MongoDB, Hypixel, Minecraft",
 };
 
 export default async function RootLayout({
-    children,
+	children,
 }: {
-    children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-    return (
-        <SessionProvider>
-            <html lang="en" className="scroll-smooth">
-                <body className={inter.className + " bg-gray-800"}>
-                    <ProgressProvider>{children}</ProgressProvider>
-                </body>
-            </html>
-        </SessionProvider>
-    );
+	return (
+		<SessionProvider>
+			<html lang="en" className="scroll-smooth">
+				<body className={inter.className + " bg-gray-800"}>
+					<ProgressProvider>
+						{children}
+						<Analytics />
+					</ProgressProvider>
+				</body>
+			</html>
+		</SessionProvider>
+	);
 }
